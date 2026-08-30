@@ -262,12 +262,13 @@ p {
   background: transparent !important;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
 }
 
 .ohk-logo-img {
-  height: 38px;
+  height: 80px;
   width: auto;
-  max-width: 150px;
+  max-width: 260px;
   object-fit: contain;
   display: block;
   background: transparent;
@@ -279,7 +280,7 @@ p {
 }
 
 .ohk-logo-svg {
-  height: 36px;
+  height: 76px;
   width: auto;
   display: block;
   background: transparent;
@@ -2151,40 +2152,48 @@ body.is-editing .ohk-trash {
     box-sizing: border-box !important;
   }
 
-  /* Header & Brand: Centered & Symmetric with Top Nav Tabs */
+  /* Header & Brand on Mobile: Top Left Corner & Significantly Bigger */
   .site-header {
     border-bottom-width: 1px;
     width: 100%;
     overflow-x: hidden;
   }
   .header-inner {
-    padding: 6px 8px 4px;
-    gap: 4px;
+    padding: 8px 10px 6px;
+    gap: 8px;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
     width: 100%;
     box-sizing: border-box;
   }
   .brand {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-self: flex-start;
+    width: auto;
+    margin: 0;
+    padding: 0;
   }
   .ohk-logo-badge {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
   .ohk-logo-img {
-    height: 48px;
-    width: auto;
-    max-width: 220px;
+    height: 80px !important;
+    max-height: 92px !important;
+    width: auto !important;
+    max-width: 260px !important;
+    object-fit: contain;
   }
   .ohk-logo-svg {
-    height: 44px;
-    width: auto;
+    height: 76px !important;
+    max-height: 88px !important;
+    width: auto !important;
+    max-width: 250px !important;
   }
 
   /* All 4 Navigation Tabs 100% Visible in a 2x2 Grid on Mobile - No Scrolling */
@@ -3663,23 +3672,42 @@ body.is-editing .ohk-trash {
   .header-inner {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 6px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 8px 10px 6px;
     width: 100%;
   }
 
   .brand {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
+    align-self: flex-start;
     padding: 0;
+    margin: 0;
     height: auto;
   }
 
+  .ohk-logo-badge {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
   .ohk-logo-img {
-    height: 32px !important;
-    max-width: 130px !important;
+    height: 80px !important;
+    max-height: 92px !important;
+    width: auto !important;
+    max-width: 260px !important;
+    object-fit: contain;
+  }
+
+  .ohk-logo-svg {
+    height: 76px !important;
+    max-height: 88px !important;
+    width: auto !important;
+    max-width: 250px !important;
   }
 
   .tabs.tabs-flat-row {

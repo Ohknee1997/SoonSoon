@@ -1,8 +1,8 @@
 import { CardData, EngineData, TabConfig } from '../types';
 
 export const DEFAULT_TABS: TabConfig[] = [
-  { id: 'fast-easy-money', label: '100$-150$ 100% Fast Easy' },
-  { id: 'casino-codes', label: 'Casino Codes' },
+  { id: 'fast-easy-money', label: '150$+ EASY DO IN ORDER' },
+  { id: 'casino-codes', label: 'Casinos' },
   { id: 'free-money', label: 'Literal Free Money' },
   { id: 'referrals', label: 'Referrals / Signup / Bonuses' },
 ];

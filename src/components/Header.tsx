@@ -72,7 +72,9 @@ export const Header: React.FC<HeaderProps> = ({
               const isActive = activeTabId === tab.id;
               const isRed =
                 tab.id === 'fast-easy-money' ||
+                tab.label.toLowerCase().includes('150$') ||
                 tab.label.toLowerCase().includes('100$') ||
+                tab.label.toLowerCase().includes('do in order') ||
                 tab.label.toLowerCase().includes('fast easy');
 
               return (
