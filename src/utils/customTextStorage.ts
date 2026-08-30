@@ -1,4 +1,5 @@
 import { CustomTextItem } from '../types';
+import { pushFullStateToCloud } from './cloudSync';
 
 export const STORE_CUSTOM_TEXTS = 'ohknee_custom_texts_v2';
 
@@ -17,10 +18,13 @@ export function getCustomTexts(): CustomTextItem[] {
   return INITIAL_CUSTOM_TEXTS;
 }
 
-export function saveCustomTexts(items: CustomTextItem[]): void {
+export function saveCustomTexts(items: CustomTextItem[], syncCloud = true): void {
   try {
     localStorage.setItem(STORE_CUSTOM_TEXTS, JSON.stringify(items));
     window.dispatchEvent(new CustomEvent('ohknee:custom-texts-updated', { detail: items }));
+    if (syncCloud) {
+      pushFullStateToCloud().catch(() => {});
+    }
   } catch (e) {
     console.error('Failed to save custom texts:', e);
   }

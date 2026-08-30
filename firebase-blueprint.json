@@ -1,0 +1,49 @@
+{
+  "entities": {
+    "AppState": {
+      "title": "AppState",
+      "description": "Master global application state including custom texts, card details, photos, and orders.",
+      "type": "object",
+      "properties": {
+        "cards": {
+          "type": "array",
+          "description": "All cards and offers"
+        },
+        "cardOverrides": {
+          "type": "object",
+          "description": "Custom card properties and user edits"
+        },
+        "cardOrder": {
+          "type": "array",
+          "description": "Ordering array of card IDs"
+        },
+        "details": {
+          "type": "object",
+          "description": "Card drawer secret sauce notes and uploaded image attachments"
+        },
+        "customTexts": {
+          "type": "array",
+          "description": "Floating custom text layers and banners"
+        },
+        "tabs": {
+          "type": "array",
+          "description": "Configured categories and tabs"
+        },
+        "vibe": {
+          "type": "string",
+          "description": "Current active theme vibe"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "ISO timestamp of last save"
+        }
+      }
+    }
+  },
+  "firestore": {
+    "/app_state/{stateId}": {
+      "schema": "AppState",
+      "description": "Master shared app state synchronized in real-time across all devices"
+    }
+  }
+}

@@ -1,160 +1,174 @@
-import React from 'react';
-import { Lock, Unlock, Plus, Settings, RotateCcw, Edit2, CheckSquare, ShieldAlert, Type } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  Edit3,
+  Check,
+  Plus,
+  Eye,
+  Settings,
+  RotateCcw,
+  Sparkles,
+  Sliders,
+  FolderPlus,
+  Download,
+} from 'lucide-react';
 
 interface EditorToolbarProps {
-  isStaffAuthenticated: boolean;
-  onOpenStaffLogin: () => void;
-  onLockStaff: () => void;
   isEditing: boolean;
   onToggleEditing: () => void;
   onAddSquare: () => void;
   onAddTab: () => void;
-  onAddText?: () => void;
+  onUnhideAll?: () => void;
   onReset: () => void;
   onOpenSettings?: () => void;
-  onOpenWorkerAdmin?: () => void;
+  onOpenDownloads?: () => void;
 }
 
 export const EditorToolbar: React.FC<EditorToolbarProps> = ({
-  isStaffAuthenticated,
-  onOpenStaffLogin,
-  onLockStaff,
   isEditing,
   onToggleEditing,
   onAddSquare,
   onAddTab,
-  onAddText,
+  onUnhideAll,
   onReset,
   onOpenSettings,
-  onOpenWorkerAdmin,
+  onOpenDownloads,
 }) => {
-  // If NOT authenticated as staff, show discrete Staff Sign-In button
-  if (!isStaffAuthenticated) {
-    return (
-      <div
-        id="ohk-toolbar"
-        className="discrete-staff-dock"
-        title="Staff Sign-In"
-      >
-        <button
-          id="ohk-staff-signin-btn"
-          type="button"
-          className="ohk-btn ohk-btn-discrete"
-          onClick={onOpenStaffLogin}
-          title="Staff & Admin Sign-In (Restricted)"
-        >
-          <Lock size={11} className="text-amber-400" />
-          <span>Staff</span>
-        </button>
-      </div>
-    );
-  }
+  const [feedback, setFeedback] = useState<string | null>(null);
 
-  // Authenticated Staff Toolbar
+  const handleUnhideAllClick = () => {
+    if (onUnhideAll) {
+      onUnhideAll();
+      setFeedback('All Apps Unhidden!');
+      setTimeout(() => setFeedback(null), 2500);
+    }
+  };
+
   return (
-    <div id="ohk-toolbar" className="staff-active-dock">
-      {/* Worker Suite Master Control (Keystroke logs, Email setup, permanent state) */}
-      {onOpenWorkerAdmin && (
+    <aside
+      id="ohk-toolbar"
+      aria-label="Editor controls"
+      className={`fixed bottom-4 right-4 z-50 flex flex-wrap items-center gap-2 rounded-2xl border border-white/20 bg-slate-900/95 p-2 shadow-2xl backdrop-blur-xl transition-all duration-300 ${
+        isEditing ? 'border-amber-400/60 ring-2 ring-amber-400/30' : 'hover:border-white/40'
+      }`}
+    >
+      {/* Active feedback toast */}
+      {feedback && (
+        <div className="absolute -top-10 right-0 rounded-lg border border-emerald-400/40 bg-emerald-950/90 px-3 py-1 text-xs font-bold text-emerald-200 shadow-lg backdrop-blur-md animate-fade-in">
+          {feedback}
+        </div>
+      )}
+
+      {/* Download Static Files (3 Files) Button */}
+      {onOpenDownloads && (
         <button
-          id="ohk-worker-admin-btn"
+          id="ohk-download-btn"
           type="button"
-          className="ohk-btn ohk-btn-ghost text-amber-300 hover:text-amber-200 border-amber-500/40 hover:bg-amber-950/40 flex items-center gap-1"
-          onClick={onOpenWorkerAdmin}
-          title="Worker Admin Suite: Keystroke Recorder, Email Auto-Responders & Permanent State"
+          className="flex items-center gap-1.5 rounded-xl border border-emerald-500/40 bg-emerald-950/70 px-3 py-2 text-xs font-bold text-emerald-300 transition-all hover:bg-emerald-900/80 hover:text-white"
+          onClick={onOpenDownloads}
+          title="Download the 3 static website deployment files (index.html, data.json, script.js)"
         >
-          <ShieldAlert size={13} className="text-amber-400" />
-          <span>Worker Suite</span>
+          <Download size={14} className="text-emerald-400" />
+          <span>Download (3 Files)</span>
         </button>
       )}
 
-      {isEditing && (
-        <p id="ohk-hint" className="hidden lg:inline-block">
-          Drag squares &middot; Click to edit &middot; +Text anywhere
-        </p>
-      )}
-
+      {/* Main Editing Controls (Visible when Edit Mode is Active) */}
       {isEditing && (
         <>
+          {/* Add Square / App Button */}
           <button
-            id="ohk-add"
+            id="ohk-add-square-btn"
             type="button"
-            className="ohk-btn ohk-btn-ghost flex items-center gap-1"
+            className="flex items-center gap-1.5 rounded-xl border border-sky-400/40 bg-sky-950/70 px-3 py-2 text-xs font-bold text-sky-200 transition-all hover:bg-sky-900/80 hover:text-white"
             onClick={onAddSquare}
-            title="Add a new square card"
+            title="Create a brand new App / Square card on this tab"
           >
-            <Plus size={13} />
-            <span>Square</span>
+            <Plus size={14} className="text-sky-400" />
+            <span>Add Square</span>
           </button>
+
+          {/* Add Tab Category Button */}
           <button
-            id="ohk-add-tab"
+            id="ohk-add-tab-btn"
             type="button"
-            className="ohk-btn ohk-btn-ghost flex items-center gap-1"
+            className="flex items-center gap-1.5 rounded-xl border border-purple-400/40 bg-purple-950/70 px-3 py-2 text-xs font-bold text-purple-200 transition-all hover:bg-purple-900/80 hover:text-white"
             onClick={onAddTab}
-            title="Add a new tab category"
+            title="Create a new Tab category"
           >
-            <Plus size={13} />
-            <span>Tab</span>
+            <FolderPlus size={14} className="text-purple-400" />
+            <span>Add Tab</span>
           </button>
-          {onAddText && (
+
+          {/* Unhide All Hidden Cards Button */}
+          {onUnhideAll && (
             <button
-              id="ohk-add-text"
+              id="ohk-unhide-all-btn"
               type="button"
-              className="ohk-btn ohk-btn-ghost text-cyan-300 hover:text-cyan-200 border-cyan-500/40 hover:bg-cyan-950/40 flex items-center gap-1 font-bold shadow-sm"
-              onClick={onAddText}
-              title="Add customizable text anywhere on the page"
+              className="flex items-center gap-1.5 rounded-xl border border-emerald-400/40 bg-emerald-950/70 px-3 py-2 text-xs font-bold text-emerald-200 transition-all hover:bg-emerald-900/80 hover:text-white"
+              onClick={handleUnhideAllClick}
+              title="Unhide all hidden apps and restore them to the screen"
             >
-              <Type size={13} className="text-cyan-400" />
-              <span>+ Text</span>
+              <Eye size={14} className="text-emerald-400" />
+              <span>Unhide All</span>
             </button>
           )}
+
+          {/* Site Settings Modal Button */}
           {onOpenSettings && (
             <button
-              id="ohk-settings"
+              id="ohk-settings-btn"
               type="button"
-              className="ohk-btn ohk-btn-ghost flex items-center gap-1"
+              className="flex items-center gap-1.5 rounded-xl border border-white/20 bg-slate-800/80 px-2.5 py-2 text-xs font-bold text-slate-200 transition-all hover:bg-slate-700 hover:text-white"
               onClick={onOpenSettings}
-              title="Site Settings"
+              title="Adjust Header & Site Settings"
             >
-              <Settings size={13} />
-              <span>Settings</span>
+              <Settings size={14} />
+              <span className="hidden sm:inline">Settings</span>
             </button>
           )}
+
+          {/* Reset Cards to Default Button */}
           <button
-            id="ohk-reset"
+            id="ohk-reset-btn"
             type="button"
-            className="ohk-btn ohk-btn-ghost flex items-center gap-1"
-            onClick={onReset}
-            title="Reset cards and tabs to default"
+            className="flex items-center gap-1.5 rounded-xl border border-rose-500/30 bg-rose-950/50 px-2.5 py-2 text-xs font-bold text-rose-300 transition-all hover:bg-rose-900/70 hover:text-white"
+            onClick={() => {
+              if (window.confirm('Reset all squares and tabs back to default?')) {
+                onReset();
+              }
+            }}
+            title="Reset cards to original layout"
           >
             <RotateCcw size={13} />
-            <span>Reset</span>
+            <span className="hidden sm:inline">Reset</span>
           </button>
         </>
       )}
 
-      {/* Toggle Edit Mode */}
+      {/* Primary Toggle Edit Mode Button */}
       <button
-        id="ohk-edit-toggle"
+        id="ohk-edit-toggle-btn"
         type="button"
-        className={`ohk-btn ${isEditing ? 'ohk-btn-primary is-on' : 'ohk-btn-primary'} flex items-center gap-1.5`}
+        className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-extrabold tracking-wider uppercase transition-all shadow-lg ${
+          isEditing
+            ? 'border border-amber-300 bg-amber-400 text-slate-950 hover:bg-amber-300 scale-105'
+            : 'border border-amber-400/50 bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:brightness-110'
+        }`}
         onClick={onToggleEditing}
-        title={isEditing ? 'Save and Exit Edit Mode' : 'Enter Visual Edit Mode'}
+        title={isEditing ? 'Save and Finish Editing' : 'Open Editing Tool to customize size, color, text, location, and unhide apps'}
       >
-        {isEditing ? <CheckSquare size={14} /> : <Edit2 size={14} />}
-        <span className="ohk-toggle-text">{isEditing ? 'DONE EDITING' : 'EDIT MODE'}</span>
+        {isEditing ? (
+          <>
+            <Check size={16} className="stroke-[3]" />
+            <span>Done Editing</span>
+          </>
+        ) : (
+          <>
+            <Edit3 size={15} />
+            <span>Editing Tool</span>
+          </>
+        )}
       </button>
-
-      {/* Lock / Sign Out Staff */}
-      <button
-        id="ohk-staff-lock-btn"
-        type="button"
-        className="ohk-btn ohk-btn-ghost text-rose-300 hover:text-rose-200 border-rose-900/50 hover:bg-rose-950/50 flex items-center gap-1 px-2.5"
-        onClick={onLockStaff}
-        title="Lock Staff Mode & Sign Out"
-      >
-        <Unlock size={13} className="text-emerald-400" />
-        <span className="text-[10.5px]">Lock</span>
-      </button>
-    </div>
+    </aside>
   );
 };

@@ -2158,8 +2158,8 @@ body.is-editing .ohk-trash {
     overflow-x: hidden;
   }
   .header-inner {
-    padding: 8px 6px 6px;
-    gap: 6px;
+    padding: 6px 8px 4px;
+    gap: 4px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -2178,13 +2178,51 @@ body.is-editing .ohk-trash {
     justify-content: center;
   }
   .ohk-logo-img {
-    height: 72px;
+    height: 48px;
     width: auto;
-    max-width: 260px;
+    max-width: 220px;
   }
   .ohk-logo-svg {
-    height: 68px;
+    height: 44px;
     width: auto;
+  }
+
+  /* All 4 Navigation Tabs 100% Visible in a 2x2 Grid on Mobile - No Scrolling */
+  .tabs,
+  .tabs.tabs-flat-row,
+  .site-header .tabs {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 4px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 4px 0 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+
+  .tab,
+  .tabs .tab,
+  .site-header .tab {
+    width: 100% !important;
+    padding: 6px 4px !important;
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+    justify-content: center !important;
+    letter-spacing: 0.01em !important;
+    border-radius: 8px !important;
+    white-space: normal !important;
+    line-height: 1.15 !important;
+    min-height: 36px !important;
+    box-sizing: border-box !important;
+  }
+
+  .tab .tab-label {
+    display: block;
+    width: 100%;
+    text-align: center;
   }
 
   /* Top Navigation Tabs on Mobile - Clean, Symmetric & Unified */

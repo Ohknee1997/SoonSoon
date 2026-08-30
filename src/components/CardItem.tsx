@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { CardData } from '../types';
 import { initialsOf, copyTextToClipboard } from '../utils';
-import { trackOfferClick } from '../utils/userAnalytics';
 
 interface CardItemProps {
   card: CardData;
   isExpanded: boolean;
-  isEditing: boolean;
+  isEditing?: boolean;
   canMoveLeft?: boolean;
   canMoveRight?: boolean;
   onToggleDrawer: (card: CardData) => void;
-  onEditCard: (card: CardData) => void;
-  onDeleteCard: (card: CardData) => void;
+  onEditCard?: (card: CardData) => void;
+  onDeleteCard?: (card: CardData) => void;
   onToggleHide?: (cardId: string) => void;
   onMoveLeft?: (cardId: string) => void;
   onMoveRight?: (cardId: string) => void;
@@ -26,7 +25,7 @@ interface CardItemProps {
 export const CardItem: React.FC<CardItemProps> = ({
   card,
   isExpanded,
-  isEditing,
+  isEditing = false,
   canMoveLeft,
   canMoveRight,
   onToggleDrawer,
@@ -43,6 +42,7 @@ export const CardItem: React.FC<CardItemProps> = ({
   isDragOver,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -56,32 +56,21 @@ export const CardItem: React.FC<CardItemProps> = ({
     });
   };
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    if (isEditing) {
+  const handleCardClick = () => {
+    if (isEditing && onEditCard) {
       onEditCard(card);
       return;
     }
-    try {
-      const active = localStorage.getItem('ohknee.active.account.user.v2');
-      const username = active ? JSON.parse(active) : 'guest';
-      trackOfferClick(username, card.name, 'drawer');
-    } catch {}
-    // Outside edit mode, click opens the drawer
     onToggleDrawer(card);
   };
 
   const handleSecretClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isEditing) {
+    if (isEditing && onEditCard) {
       onEditCard(card);
       return;
     }
-    try {
-      const active = localStorage.getItem('ohknee.active.account.user.v2');
-      const username = active ? JSON.parse(active) : 'guest';
-      trackOfferClick(username, card.name, 'secret_sauce');
-    } catch {}
     onToggleDrawer(card);
   };
 
@@ -90,11 +79,6 @@ export const CardItem: React.FC<CardItemProps> = ({
       e.preventDefault();
       return;
     }
-    try {
-      const active = localStorage.getItem('ohknee.active.account.user.v2');
-      const username = active ? JSON.parse(active) : 'guest';
-      trackOfferClick(username, card.name, 'signup');
-    } catch {}
   };
 
   const handleEditClick = (e: React.MouseEvent) => {
@@ -111,11 +95,13 @@ export const CardItem: React.FC<CardItemProps> = ({
     }
   };
 
-  const logoSrc =
+  const rawLogoSrc =
     card.logoUrl ||
     (card.domain
       ? `https://www.google.com/s2/favicons?domain=${card.domain}&sz=128`
       : undefined);
+
+  const logoSrc = imgError ? undefined : rawLogoSrc;
 
   return (
     <article
@@ -321,7 +307,14 @@ export const CardItem: React.FC<CardItemProps> = ({
                 <span className="star-char">★</span>
               </div>
             )}
-            <img src={logoSrc} alt={`${card.name} logo`} loading="lazy" decoding="async" />
+            <img
+              src={logoSrc}
+              alt={`${card.name} logo`}
+              loading="lazy"
+              decoding="async"
+              referrerPolicy="no-referrer"
+              onError={() => setImgError(true)}
+            />
             <span className="avatar-glow" aria-hidden="true" />
           </div>
         ) : (
