@@ -1632,29 +1632,55 @@ body.is-editing .ohk-trash {
 }
 
 #ohk-toolbar.discrete-staff-dock {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 4px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  position: fixed !important;
+  right: 10px !important;
+  bottom: 10px !important;
+  left: auto !important;
+  z-index: 9999 !important;
+  opacity: 0 !important;
+  pointer-events: auto !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 6px !important;
+  margin: 0 !important;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease !important;
+  cursor: pointer !important;
+  touch-action: manipulation;
+}
+
+#ohk-toolbar.discrete-staff-dock:hover,
+#ohk-toolbar.discrete-staff-dock:focus-within,
+#ohk-toolbar.discrete-staff-dock:active {
+  opacity: 1 !important;
+  transform: scale(1.04);
 }
 
 .ohk-btn-discrete {
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  background: rgba(15, 23, 42, 0.9);
-  color: #cbd5e1;
-  text-transform: none;
-  letter-spacing: 0.02em;
-  font-size: 11.5px;
-  padding: 6px 12px;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+  background: rgba(10, 15, 29, 0.94) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  color: #cbd5e1 !important;
+  text-transform: none !important;
+  letter-spacing: 0.02em !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 4px 8px !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7), 0 0 10px rgba(245, 158, 11, 0.15) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
 }
 
 .ohk-btn-discrete:hover {
-  background: #1e293b;
-  color: #fbbf24;
-  border-color: rgba(245, 158, 11, 0.7);
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+  background: #0f172a !important;
+  color: #fbbf24 !important;
+  border-color: rgba(245, 158, 11, 0.85) !important;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.5) !important;
 }
 
 #ohk-modal {
@@ -3578,52 +3604,46 @@ body.is-editing .ohk-trash {
 }
 
 @media (max-width: 767px) {
-  /* Ultra-compact sticky mobile app header */
+  /* Miniature Desktop Header on Mobile */
   .site-header {
     position: sticky;
     top: 0;
     z-index: 40;
-    padding: 0;
-    background: rgba(255, 255, 255, 0.55) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.08);
   }
 
   [data-vibe="goth"] .site-header,
   [data-vibe="greed"] .site-header {
-    background: rgba(10, 8, 20, 0.75) !important;
+    background: rgba(10, 8, 20, 0.85) !important;
     border-bottom-color: rgba(255, 255, 255, 0.1);
   }
 
   .header-inner {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     gap: 4px;
-    padding: 6px 10px 6px;
+    padding: 4px 6px;
     width: 100%;
   }
 
   .brand {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     padding: 0;
-    height: 38px;
+    height: auto;
   }
 
   .ohk-logo-img {
-    height: 34px !important;
+    height: 32px !important;
     max-width: 130px !important;
   }
 
-  .ohk-logo-svg {
-    height: 32px !important;
-  }
-
-  /* Freecash-style Horizontal swipeable category pills */
   .tabs.tabs-flat-row {
     display: flex;
     flex-wrap: nowrap;
@@ -3631,7 +3651,7 @@ body.is-editing .ohk-trash {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     gap: 4px;
-    padding: 1px 0 3px;
+    padding: 2px 0 4px;
     margin: 0;
     width: 100%;
   }
@@ -3642,136 +3662,139 @@ body.is-editing .ohk-trash {
 
   .tab {
     flex-shrink: 0;
-    padding: 4px 10px !important;
-    font-size: 11px !important;
+    padding: 4px 8px !important;
+    font-size: 10px !important;
     font-weight: 800 !important;
     letter-spacing: 0.02em !important;
     border-radius: 9999px !important;
-    height: 26px !important;
+    height: 24px !important;
     white-space: nowrap !important;
-    gap: 4px !important;
+    gap: 3px !important;
   }
 
-  /* Site main padding for bottom navigation clearance */
+  /* Site main padding */
   .site-main {
-    padding: 4px 6px 72px !important;
+    padding: 4px 6px 60px !important;
   }
 
-  /* High-density cards grid to fit all offers on one screen without scrolling */
+  /* Miniature Desktop Multi-Column Grid (3 Columns on mobile phones) */
   .grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    padding: 4px 0 !important;
+  }
+
+  @media (max-width: 400px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 6px !important;
+    }
+  }
+
+  /* Miniature Desktop Card Structure */
+  .card.app-card,
+  .card {
     display: flex !important;
     flex-direction: column !important;
-    gap: 5px !important;
-    width: 100% !important;
-  }
-
-  /* Ultra-compact horizontal offer card */
-  .card.app-card {
-    display: flex !important;
-    flex-direction: row !important;
     align-items: center !important;
-    justify-content: space-between !important;
-    padding: 6px 8px !important;
-    border-radius: 10px !important;
-    background: rgba(255, 255, 255, 0.82) !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
-    border: 1.2px solid rgba(255, 255, 255, 0.75) !important;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05) !important;
-    gap: 6px !important;
-    cursor: pointer;
+    justify-content: flex-start !important;
+    padding: 6px 5px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.7) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
     min-height: auto !important;
+    text-align: center !important;
   }
 
-  [data-vibe="goth"] .card.app-card {
+  [data-vibe="goth"] .card.app-card,
+  [data-vibe="goth"] .card {
     background: rgba(18, 12, 28, 0.88) !important;
     border-color: rgba(255, 255, 255, 0.14) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
   }
 
-  [data-vibe="greed"] .card.app-card {
+  [data-vibe="greed"] .card.app-card,
+  [data-vibe="greed"] .card {
     background: rgba(9, 24, 18, 0.88) !important;
     border-color: rgba(34, 197, 94, 0.3) !important;
   }
 
-  .card.app-card:hover,
-  .card.app-card:active {
-    transform: translateY(-1px) scale(1.005) !important;
-  }
-
-  /* Card Top -> Left Compact Icon block */
   .card-top {
+    width: 100% !important;
     display: flex !important;
-    flex-direction: row !important;
+    flex-direction: column !important;
     align-items: center !important;
-    flex-shrink: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    justify-content: center !important;
+    margin-bottom: 2px !important;
   }
 
   .logo-tile {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    max-height: 36px !important;
-    margin: 0 !important;
+    width: 100% !important;
+    height: 42px !important;
+    max-height: 42px !important;
+    margin: 0 auto 2px !important;
     padding: 0 !important;
-    border-radius: 8px !important;
-    background: rgba(255, 255, 255, 0.6) !important;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 6px !important;
+    background: transparent !important;
+    box-shadow: none !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    overflow: hidden !important;
   }
 
   .logo-tile img {
-    width: 28px !important;
-    height: 28px !important;
-    max-height: 28px !important;
+    height: 38px !important;
+    max-height: 40px !important;
+    width: auto !important;
+    max-width: 95% !important;
     object-fit: contain !important;
-    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.15)) !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.18)) !important;
   }
 
   .avatar {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    margin: 0 !important;
-    border-radius: 8px !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    margin: 0 auto 2px !important;
+    border-radius: 6px !important;
   }
 
   .avatar-initials {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
-  /* Card Info & Details Center Column */
   .card-titles {
     display: flex !important;
     flex-direction: column !important;
-    align-items: flex-start !important;
+    align-items: center !important;
     justify-content: center !important;
-    text-align: left !important;
-    flex: 1 !important;
-    min-width: 0 !important;
-    padding: 0 2px !important;
+    text-align: center !important;
+    width: 100% !important;
+    padding: 0 1px !important;
   }
 
   .card-name {
-    font-size: 12.5px !important;
+    font-size: 10.5px !important;
     font-weight: 800 !important;
-    text-align: left !important;
+    text-align: center !important;
     line-height: 1.15 !important;
     color: var(--text-bright) !important;
-    white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    max-width: 100% !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    width: 100% !important;
   }
 
   .card-sub {
-    font-size: 9.5px !important;
-    text-align: left !important;
+    font-size: 8.5px !important;
+    text-align: center !important;
     color: var(--text-dim) !important;
     margin-top: 1px !important;
     white-space: nowrap !important;
@@ -3780,96 +3803,105 @@ body.is-editing .ohk-trash {
     max-width: 100% !important;
   }
 
-  /* Compact inline Payout */
+  /* Miniature Payout */
   .payout {
     display: flex !important;
-    flex-direction: row !important;
+    flex-direction: column !important;
     align-items: center !important;
-    gap: 3px !important;
-    margin: 1px 0 0 !important;
+    gap: 1px !important;
+    margin: 3px 0 0 !important;
+    width: 100% !important;
   }
 
   .payout-amt {
-    font-size: 12.5px !important;
+    font-size: 11.5px !important;
     font-weight: 900 !important;
-    color: #16a34a !important;
     line-height: 1 !important;
   }
 
   .payout-tag {
-    font-size: 8px !important;
-    height: 14px !important;
+    font-size: 7.5px !important;
+    height: 13px !important;
     padding: 0 4px !important;
-    border-radius: 3px !important;
+    border-radius: 9999px !important;
     font-weight: 800 !important;
-    letter-spacing: 0.02em !important;
   }
 
-  /* Promo code row: compact inline chip */
+  /* Miniature Promo code row */
   .code-row {
     margin: 2px 0 0 !important;
-    padding: 1px 5px !important;
-    min-height: 18px !important;
-    gap: 3px !important;
+    padding: 1px 4px !important;
+    min-height: 16px !important;
+    gap: 2px !important;
     border-radius: 4px !important;
-    width: fit-content !important;
-    max-width: 100% !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .code-key {
-    font-size: 7.5px !important;
+    font-size: 7px !important;
     font-weight: 800 !important;
-    color: #64748b !important;
   }
 
   .code-value {
-    font-size: 9.5px !important;
+    font-size: 8.5px !important;
     font-weight: 800 !important;
   }
 
   .code-copy {
-    padding: 0 4px !important;
-    height: 15px !important;
-    font-size: 7.5px !important;
+    padding: 0 3px !important;
+    height: 13px !important;
+    font-size: 7px !important;
     font-weight: 800 !important;
     border-radius: 3px !important;
   }
 
   .code-none {
-    font-size: 8.5px !important;
+    font-size: 7.5px !important;
   }
 
-  /* Card Action Buttons (Right Column) */
+  /* Card Action Buttons: Claim and Secret side by side */
   .card-cta {
-    flex-shrink: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    width: 100% !important;
+    margin-top: auto !important;
+    padding-top: 3px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .card-cta::before {
+    display: none !important;
   }
 
   .card-cta-row {
     display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 3px !important;
-    width: 68px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 2px !important;
+    width: 100% !important;
   }
 
   .signup-btn {
-    height: 24px !important;
-    min-height: 24px !important;
-    padding: 0 4px !important;
-    font-size: 9.5px !important;
-    font-weight: 800 !important;
-    border-radius: 5px !important;
+    flex: 1 1 0 !important;
+    height: 20px !important;
+    min-height: 20px !important;
+    padding: 0 2px !important;
+    font-size: 8px !important;
+    font-weight: 900 !important;
+    border-radius: 4px !important;
     justify-content: center !important;
-    letter-spacing: 0.02em !important;
+    letter-spacing: 0.01em !important;
+    white-space: nowrap !important;
   }
 
   .secret-btn {
-    height: 18px !important;
-    min-height: 18px !important;
-    padding: 0 3px !important;
-    font-size: 8px !important;
+    flex: 1 1 0 !important;
+    height: 20px !important;
+    min-height: 20px !important;
+    padding: 0 2px !important;
+    font-size: 7.5px !important;
     line-height: 1 !important;
     border-radius: 4px !important;
     justify-content: center !important;
@@ -3877,13 +3909,9 @@ body.is-editing .ohk-trash {
     white-space: nowrap !important;
   }
 
-  .secret-btn br {
-    display: none;
-  }
-
   /* Floating Cooked Chat Trigger on Mobile */
   #floating-cooked-chat-btn {
-    bottom: 68px !important;
+    bottom: 20px !important;
     right: 10px !important;
     padding: 6px 12px !important;
     border-radius: 9999px !important;
@@ -3929,22 +3957,22 @@ body.is-editing .ohk-trash {
 
   /* Footer on Mobile */
   .site-footer {
-    padding: 24px 16px 40px !important;
+    padding: 20px 12px 36px !important;
   }
 
   /* Edit toolbar on mobile */
   #ohk-toolbar {
-    bottom: 24px !important;
-    right: 12px !important;
+    bottom: 20px !important;
+    right: 10px !important;
     left: auto !important;
-    padding: 6px 10px !important;
+    padding: 5px 8px !important;
   }
 
   .stake-chat-container {
     width: min(94vw, 380px) !important;
-    height: 440px !important;
+    height: 420px !important;
     right: 3vw !important;
-    bottom: 24px !important;
+    bottom: 20px !important;
   }
 }
 

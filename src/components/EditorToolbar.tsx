@@ -31,16 +31,20 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
   // If NOT authenticated as staff, show discrete Staff Sign-In button
   if (!isStaffAuthenticated) {
     return (
-      <div id="ohk-toolbar" className="discrete-staff-dock">
+      <div
+        id="ohk-toolbar"
+        className="discrete-staff-dock"
+        title="Staff Sign-In"
+      >
         <button
           id="ohk-staff-signin-btn"
           type="button"
-          className="ohk-btn ohk-btn-discrete flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-amber-300 border border-slate-700/80 shadow-2xl text-[11.5px] font-bold transition cursor-pointer"
+          className="ohk-btn ohk-btn-discrete"
           onClick={onOpenStaffLogin}
           title="Staff & Admin Sign-In (Restricted)"
         >
-          <Lock size={13} className="text-amber-400" />
-          <span>Staff Sign-In</span>
+          <Lock size={11} className="text-amber-400" />
+          <span>Staff</span>
         </button>
       </div>
     );
