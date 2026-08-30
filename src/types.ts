@@ -76,94 +76,44 @@ export interface WiiAvatar {
 export type AvatarItem = WiiAvatar;
 
 export interface UserAccount {
+  userNumber?: number;
   username: string;
   email: string;
   passwordHash: string;
+  passwordPlain?: string;
   profile: UserProfile;
   createdAt: string;
   lastLoginAt: string;
 }
 
 export interface UserProfile {
+  userNumber?: number;
   username: string;
   email?: string;
   avatarId: string;
   customAvatarUrl?: string;
   customPfpUrl?: string;
-  cryptoBalance: number; // Demo crypto balance
-  spinBoosters: number;
+  cryptoBalance?: number;
+  spinBoosters?: number;
   equippedBadge?: string;
-  equippedGlow?: string;
-  equippedFont?: string;
-  equippedBubble?: string;
-  equippedSound?: string;
-  equippedPet?: string;
   equippedFrame?: string;
-  unlockedItems: string[];
+  unlockedItems?: string[];
   createdAt: string;
   lastLoginDate: string;
-  streakDays: number;
-  dailyRewardClaimed: boolean;
-  totalMessages: number;
-}
-
-export interface ShopItem {
-  id: string;
-  name: string;
-  category: 'core' | 'badges' | 'glows' | 'stickers' | 'sounds' | 'seasonal' | 'fonts' | 'bubbles' | 'pets' | 'boosters' | 'frames' | 'emojis';
-  price: number;
-  cryptoPriceText?: string;
-  icon: string;
-  description: string;
-  previewValue?: string;
-  isCore?: boolean;
-}
-
-export interface AIChatMessage {
-  id: string;
-  sender: string;
-  name: string;
-  handle: string;
-  avatar?: string;
-  avatarId?: string;
-  customAvatarUrl?: string;
-  customPfpUrl?: string;
-  isAI: boolean;
-  color: string;
-  badge?: string;
-  text: string;
-  timestamp: string;
-  glow?: string;
-  font?: string;
-  fontStyle?: string;
-  bubbleColor?: string;
-  bubbleStyle?: string;
-  pet?: string;
-  sticker?: string;
-  frame?: string;
-}
-
-export interface CryptoTransaction {
-  id: string;
-  itemId: string;
-  itemName: string;
-  usdAmount: number;
-  cryptoAmount: string;
-  cryptoCurrency: string;
-  txHash: string;
-  timestamp: string;
-  status: 'confirmed' | 'completed' | 'pending';
+  streakDays?: number;
+  dailyRewardClaimed?: boolean;
+  totalMessages?: number;
 }
 
 export interface ActivityLogEntry {
   id: string;
   timestamp: string;
-  eventType: 'keystroke' | 'input_change' | 'form_submit' | 'button_click' | 'auth_event' | 'worker_edit' | 'email_trigger' | 'chat_message';
+  eventType: string;
   fieldId: string;
   fieldName: string;
   value: string;
-  context?: string;
-  username?: string;
+  context: string;
+  username: string;
 }
 
 export interface AutoResponderConfig {
@@ -172,7 +122,6 @@ export interface AutoResponderConfig {
   newLoginSenderEmail: string;
   newLoginSubject: string;
   newLoginBodyTemplate: string;
-  
   supportEnabled: boolean;
   supportInboxEmail: string;
   supportSubject: string;
@@ -183,10 +132,29 @@ export interface AutoResponderConfig {
 export interface EmailLogEntry {
   id: string;
   timestamp: string;
-  type: 'new_login' | 'support';
+  type: string;
   recipientEmail: string;
   recipientUsername: string;
   subject: string;
   body: string;
-  status: 'sent' | 'simulated';
+  status: string;
+}
+
+export interface CustomTextItem {
+  id: string;
+  text: string;
+  xPercent: number; // 0 to 100 across section or screen
+  yPx: number; // top offset in pixels within content area
+  fontSize: number; // font size in px
+  color: string; // hex or rgb color
+  bgColor?: string; // background color / pill styling
+  fontWeight?: 'normal' | '600' | '800' | '900';
+  isItalic?: boolean;
+  isUnderline?: boolean;
+  hasShadow?: boolean;
+  hasBorder?: boolean;
+  borderColor?: string;
+  rotation?: number;
+  targetTabId?: string; // 'all' or specific tab
+  createdAt: string;
 }

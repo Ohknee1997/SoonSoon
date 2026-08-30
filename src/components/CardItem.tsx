@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CardData } from '../types';
 import { initialsOf, copyTextToClipboard } from '../utils';
+import { trackOfferClick } from '../utils/userAnalytics';
 
 interface CardItemProps {
   card: CardData;
@@ -60,6 +61,11 @@ export const CardItem: React.FC<CardItemProps> = ({
       onEditCard(card);
       return;
     }
+    try {
+      const active = localStorage.getItem('ohknee.active.account.user.v2');
+      const username = active ? JSON.parse(active) : 'guest';
+      trackOfferClick(username, card.name, 'drawer');
+    } catch {}
     // Outside edit mode, click opens the drawer
     onToggleDrawer(card);
   };
@@ -71,7 +77,24 @@ export const CardItem: React.FC<CardItemProps> = ({
       onEditCard(card);
       return;
     }
+    try {
+      const active = localStorage.getItem('ohknee.active.account.user.v2');
+      const username = active ? JSON.parse(active) : 'guest';
+      trackOfferClick(username, card.name, 'secret_sauce');
+    } catch {}
     onToggleDrawer(card);
+  };
+
+  const handleSignUpClick = (e: React.MouseEvent) => {
+    if (isEditing) {
+      e.preventDefault();
+      return;
+    }
+    try {
+      const active = localStorage.getItem('ohknee.active.account.user.v2');
+      const username = active ? JSON.parse(active) : 'guest';
+      trackOfferClick(username, card.name, 'signup');
+    } catch {}
   };
 
   const handleEditClick = (e: React.MouseEvent) => {
@@ -354,7 +377,7 @@ export const CardItem: React.FC<CardItemProps> = ({
             href={card.signupUrl || '#'}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => isEditing && e.preventDefault()}
+            onClick={handleSignUpClick}
           >
             <span className="signup-label">{card.signupLabel || 'SIGN UP'}</span>
             <svg

@@ -104,9 +104,12 @@ export const WiiAvatarSpinnerModal: React.FC<WiiAvatarSpinnerModalProps> = ({
   const handleFinishOnboarding = () => {
     if (!winningAvatar) return;
 
+    const cleanUser = username.trim().replace(/^@/, '');
+    const cleanEmail = (email || '').trim() || `${cleanUser.toLowerCase()}@ohknee.app`;
+
     const initialProfile: UserProfile = {
-      username,
-      email: email || '',
+      username: cleanUser,
+      email: cleanEmail,
       avatarId: winningAvatar.id,
       cryptoBalance: 0.00, // No starter balance
       spinBoosters: 0, // No starter spin booster
@@ -120,7 +123,7 @@ export const WiiAvatarSpinnerModal: React.FC<WiiAvatarSpinnerModalProps> = ({
     };
 
     if (password) {
-      createAccount(username, email || 'user@ohknee.app', password, initialProfile);
+      createAccount(cleanUser, cleanEmail, password, initialProfile);
     } else {
       syncUserProfile(initialProfile);
     }

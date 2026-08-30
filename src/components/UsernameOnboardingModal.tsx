@@ -31,7 +31,7 @@ export const UsernameOnboardingModal: React.FC<UsernameOnboardingModalProps> = (
 
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
-    const clean = username.trim();
+    const clean = username.trim().replace(/^@/, '');
     const cleanEmail = email.trim();
 
     if (!clean) {
@@ -90,10 +90,10 @@ export const UsernameOnboardingModal: React.FC<UsernameOnboardingModalProps> = (
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    const clean = username.trim();
+    const clean = username.trim().replace(/^@/, '');
 
     if (!clean) {
-      setError('Please enter your username to sign in.');
+      setError('Please enter your username or email to sign in.');
       return;
     }
     if (!password) {

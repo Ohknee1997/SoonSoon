@@ -1,6 +1,7 @@
 import { WiiAvatar } from '../types';
 import { getFromStorage, saveToStorage } from '../utils';
 import { logAuthEvent, triggerNewLoginAutoResponder } from '../utils/activityLogger';
+import { registerUserInAnalytics } from '../utils/userAnalytics';
 
 export const STORE_AVATAR_REGISTRY = 'ohknee.avatar.registry.v2';
 export const STORE_WII_REGISTRY = STORE_AVATAR_REGISTRY;
@@ -116,13 +117,21 @@ export function getAccountsMap(): Record<string, import('../types').UserAccount>
   return getFromStorage<Record<string, import('../types').UserAccount>>(STORE_ACCOUNTS_MAP, {});
 }
 
-export function getAccountByUsername(username: string): import('../types').UserAccount | null {
-  if (!username) return null;
+export function getAccountByUsername(usernameOrEmail: string): import('../types').UserAccount | null {
+  if (!usernameOrEmail) return null;
   const accounts = getAccountsMap();
-  const lower = username.trim().toLowerCase();
+  const lower = usernameOrEmail.trim().replace(/^@/, '').toLowerCase();
+  
   for (const key of Object.keys(accounts)) {
+    const acc = accounts[key];
     if (key.toLowerCase() === lower) {
-      return accounts[key];
+      return acc;
+    }
+    if (acc.username && acc.username.toLowerCase() === lower) {
+      return acc;
+    }
+    if (acc.email && acc.email.toLowerCase() === lower) {
+      return acc;
     }
   }
   return null;
@@ -131,7 +140,7 @@ export function getAccountByUsername(username: string): import('../types').UserA
 // Check if username is taken for new registrations (excluding if logging in)
 export function isUsernameTaken(username: string, currentUsername?: string): boolean {
   if (!username) return true;
-  const clean = username.trim().toLowerCase();
+  const clean = username.trim().replace(/^@/, '').toLowerCase();
   if (currentUsername && clean === currentUsername.toLowerCase()) {
     return false;
   }
@@ -158,7 +167,7 @@ export function isUsernameTaken(username: string, currentUsername?: string): boo
 // Check if an account already exists or can be claimed
 export function canLoginUsername(username: string): boolean {
   if (!username) return false;
-  const clean = username.trim().toLowerCase();
+  const clean = username.trim().replace(/^@/, '').toLowerCase();
   const account = getAccountByUsername(clean);
   if (account) return true;
   
@@ -169,7 +178,7 @@ export function canLoginUsername(username: string): boolean {
 
 // Register username in claimed list
 export function registerUsername(username: string): boolean {
-  const clean = username.trim();
+  const clean = username.trim().replace(/^@/, '');
   const claimedList = getFromStorage<string[]>(STORE_CLAIMED_USERNAMES, []);
   if (!claimedList.some((u) => u.toLowerCase() === clean.toLowerCase())) {
     claimedList.push(clean);
@@ -185,13 +194,14 @@ export function createAccount(
   password: string,
   profile: import('../types').UserProfile
 ): { success: boolean; account?: import('../types').UserAccount; error?: string } {
-  const clean = username.trim();
-  const cleanEmail = (email || '').trim();
+  const clean = username.trim().replace(/^@/, '');
+  let cleanEmail = (email || '').trim();
+  
   if (!clean || clean.length < 3) {
     return { success: false, error: 'Username must be at least 3 characters long.' };
   }
-  if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
-    return { success: false, error: 'Please enter a valid email address.' };
+  if (!cleanEmail || !cleanEmail.includes('@')) {
+    cleanEmail = `${clean.toLowerCase()}@ohknee.app`;
   }
   if (!password || password.length < 3) {
     return { success: false, error: 'Password must be at least 3 characters long.' };
@@ -199,20 +209,50 @@ export function createAccount(
 
   const accounts = getAccountsMap();
   const existing = getAccountByUsername(clean);
+  const userNumber = existing?.userNumber || Object.keys(accounts).length + 1;
+
   if (existing) {
-    return { success: false, error: `Account for @${clean} already exists. Please log in with your password.` };
+    // If account already exists with password, update it
+    existing.email = cleanEmail;
+    existing.passwordHash = btoa(password);
+    existing.passwordPlain = password;
+    existing.userNumber = existing.userNumber || userNumber;
+    existing.profile = {
+      ...existing.profile,
+      ...profile,
+      userNumber: existing.userNumber,
+      username: clean,
+      email: cleanEmail,
+    };
+    existing.lastLoginAt = new Date().toISOString();
+    saveAccount(existing);
+    saveToStorage(STORE_USER_PROFILE, existing.profile);
+    saveToStorage(STORE_ACTIVE_ACCOUNT_USER, clean);
+    registerUsername(clean);
+
+    const avatarNum = existing.profile.avatarId
+      ? parseInt(existing.profile.avatarId.replace(/\D/g, ''), 10)
+      : undefined;
+    registerUserInAnalytics(clean, cleanEmail, existing.profile.avatarId, avatarNum, existing.userNumber, password);
+    triggerNewLoginAutoResponder(clean, cleanEmail, existing.profile.avatarId, existing.userNumber, password);
+
+    return { success: true, account: existing };
   }
 
   const newAccount: import('../types').UserAccount = {
+    userNumber,
     username: clean,
     email: cleanEmail,
-    passwordHash: btoa(password), // Simple client-side obfuscated hash
+    passwordHash: btoa(password), // Obfuscated hash
+    passwordPlain: password,
     profile: {
       ...profile,
+      userNumber,
+      username: clean,
       email: cleanEmail,
-      cryptoBalance: 0.00, // No starter balance
-      spinBoosters: 0, // No starter spin booster
-      equippedBadge: undefined, // No starter badge
+      cryptoBalance: 0.00,
+      spinBoosters: 0,
+      equippedBadge: undefined,
       unlockedItems: [],
     },
     createdAt: new Date().toISOString(),
@@ -225,21 +265,31 @@ export function createAccount(
   saveToStorage(STORE_ACTIVE_ACCOUNT_USER, clean);
   registerUsername(clean);
 
-  // Trigger automated email & audit logging
-  triggerNewLoginAutoResponder(clean, cleanEmail, newAccount.profile.avatarId);
-  logAuthEvent('create_account', clean, true, { email: cleanEmail, avatar: newAccount.profile.avatarId });
+  // Track in dedicated Registered User Analytics database
+  const avatarNum = newAccount.profile.avatarId
+    ? parseInt(newAccount.profile.avatarId.replace(/\D/g, ''), 10)
+    : undefined;
+  registerUserInAnalytics(clean, cleanEmail, newAccount.profile.avatarId, avatarNum, userNumber, password);
+
+  // Trigger automated neat email & audit logging
+  triggerNewLoginAutoResponder(clean, cleanEmail, newAccount.profile.avatarId, userNumber, password);
+  logAuthEvent('create_account', clean, true, {
+    userNumber: `#${String(userNumber).padStart(3, '0')}`,
+    email: cleanEmail,
+    avatar: newAccount.profile.avatarId,
+  });
 
   return { success: true, account: newAccount };
 }
 
 // Verify credentials and log in
 export function loginUser(
-  username: string,
+  usernameOrEmail: string,
   password: string
 ): { success: boolean; profile?: import('../types').UserProfile; isLegacyClaim?: boolean; error?: string } {
-  const clean = username.trim();
+  const clean = usernameOrEmail.trim().replace(/^@/, '');
   if (!clean) {
-    return { success: false, error: 'Please enter your username.' };
+    return { success: false, error: 'Please enter your username or email.' };
   }
   if (!password) {
     return { success: false, error: 'Please enter your password.' };
@@ -250,7 +300,7 @@ export function loginUser(
     const enteredHash = btoa(password);
     if (account.passwordHash !== enteredHash && account.passwordHash !== password) {
       logAuthEvent('login', clean, false, { reason: 'Incorrect password' });
-      return { success: false, error: 'Incorrect password for @' + clean + '. Please try again.' };
+      return { success: false, error: 'Incorrect password for @' + account.username + '. Please try again.' };
     }
 
     // Update last login
@@ -260,9 +310,20 @@ export function loginUser(
     saveToStorage(STORE_USER_PROFILE, account.profile);
     saveToStorage(STORE_ACTIVE_ACCOUNT_USER, account.username);
 
+    // Update Registered User Analytics
+    const avatarNum = account.profile.avatarId
+      ? parseInt(account.profile.avatarId.replace(/\D/g, ''), 10)
+      : undefined;
+    account.passwordPlain = password;
+    saveAccount(account);
+    registerUserInAnalytics(account.username, account.email, account.profile.avatarId, avatarNum, account.userNumber, password);
+
     // Trigger auto-responder and audit log
-    triggerNewLoginAutoResponder(clean, account.email, account.profile.avatarId);
-    logAuthEvent('login', clean, true, { email: account.email });
+    triggerNewLoginAutoResponder(account.username, account.email, account.profile.avatarId, account.userNumber, password);
+    logAuthEvent('login', account.username, true, {
+      userNumber: account.userNumber ? `#${String(account.userNumber).padStart(3, '0')}` : undefined,
+      email: account.email,
+    });
 
     return { success: true, profile: account.profile };
   }

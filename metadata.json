@@ -1,6 +1,6 @@
 {
-  "name": "OHKNEE APP - Reward Dashboard & AI Chat Lounge",
-  "description": "Kinetic Reward Arsenal featuring top-right autonomous AI character lounge, 100-slot 2000s avatar roulette identity system, crypto micro-transaction shop, and daily streak rewards.",
+  "name": "OHKNEE APP - Reward Dashboard",
+  "description": "Kinetic Reward Arsenal featuring sign-up bonus links, guide notes with proof pictures, 100-slot 2000s avatar roulette identity system, and fast easy money offers.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

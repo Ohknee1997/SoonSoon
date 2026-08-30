@@ -6,6 +6,7 @@ import {
   CardDetail,
   VibeType,
   HeaderConfig,
+  CustomTextItem,
 } from './types';
 import {
   DEFAULT_TABS,
@@ -31,20 +32,31 @@ import { EngineCard } from './components/EngineCard';
 import { CardDrawer } from './components/CardDrawer';
 import { EditModal } from './components/EditModal';
 import { EditorToolbar } from './components/EditorToolbar';
-import { MobileBottomNav } from './components/MobileBottomNav';
+import { CustomTextLayer } from './components/CustomTextLayer';
+import { getCustomTexts, addCustomText } from './utils/customTextStorage';
 import { StaffAuthModal } from './components/StaffAuthModal';
 import { WorkerAdminDashboardModal } from './components/WorkerAdminDashboardModal';
 import { initializeGlobalInputRecorder, logWorkerAction } from './utils/activityLogger';
+import { addTimeSpent } from './utils/userAnalytics';
+import { syncFullStateToGoogleDoc, getDocsSyncState } from './utils/googleDocsSync';
+import { getAccessToken, initAuth } from './utils/googleAuth';
 
-// AI Website Chat, Shop & Profile System imports
-import { UserProfile, ShopItem, WiiAvatar } from './types';
+// User Profile & Onboarding Avatar Roulette imports
+import { UserProfile } from './types';
 import { getUserProfile, syncUserProfile, getAvatarById } from './data/wiiAvatars';
 import { UsernameOnboardingModal } from './components/UsernameOnboardingModal';
 import { WiiAvatarSpinnerModal } from './components/WiiAvatarSpinnerModal';
-import { AIWebsiteChatWidget } from './components/AIWebsiteChatWidget';
-import { CryptoCheckoutModal } from './components/CryptoCheckoutModal';
 import { UserProfileModal } from './components/UserProfileModal';
 import { WiiFaceIcon } from './components/WiiFaceIcon';
+
+// Blacklist of duplicate IDs from other tabs that belong strictly in the red tab
+const DUPLICATE_IDS_TO_REMOVE = new Set([
+  '27',                   // Stake duplicate from Casino
+  'free-money-gemsloot',  // Gemsloot duplicate from Free Money
+  'free-money-freecash',  // Freecash duplicate from Free Money
+  'free-crypto-0',        // Coinbase duplicate from Free Money
+  'trading-cards-0',      // Kalshi duplicate from Referrals
+]);
 
 export default function App() {
   // User Profile & System State
@@ -58,9 +70,7 @@ export default function App() {
   const [pendingPassword, setPendingPassword] = useState<string>('');
   const [pendingEmail, setPendingEmail] = useState<string>('');
   const [isAvatarSpinnerOpen, setIsAvatarSpinnerOpen] = useState<boolean>(false);
-  const [isAIChatOpen, setIsAIChatOpen] = useState<boolean>(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
-  const [checkoutItem, setCheckoutItem] = useState<ShopItem | null>(null);
 
   // Staff Authentication State (Restricted Edit Mode)
   const [isStaffAuthenticated, setIsStaffAuthenticated] = useState<boolean>(() => {
@@ -76,6 +86,59 @@ export default function App() {
   // Initialize global keystroke & input audit recorder on mount
   useEffect(() => {
     initializeGlobalInputRecorder();
+
+    // If URL contains ?staff_view=1 or ?admin=1, open staff modal or admin suite
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('staff_view') === '1' || searchParams.get('admin') === '1') {
+      try {
+        const isAuthed = sessionStorage.getItem('ohk_staff_authenticated') === 'true';
+        if (isAuthed) {
+          setIsStaffAuthenticated(true);
+          setIsEditing(true);
+          setIsWorkerAdminOpen(true);
+        } else {
+          setIsStaffLoginOpen(true);
+        }
+      } catch {}
+    }
+  }, []);
+
+  // Heartbeat tracker: increment user time on page every 5 seconds when page is active
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible' && userProfile?.username) {
+        addTimeSpent(userProfile.username, 5);
+      }
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [userProfile?.username]);
+
+  // Automated 5-minute live Google Doc state synchronization loop
+  useEffect(() => {
+    initAuth();
+
+    const runSync = async () => {
+      const syncState = getDocsSyncState();
+      if (!syncState.isAutoSyncActive) return;
+      const token = getAccessToken();
+      if (token) {
+        try {
+          await syncFullStateToGoogleDoc(token);
+        } catch (e) {
+          console.warn('Background 5m sync error:', e);
+        }
+      }
+    };
+
+    // Initial check after 15s
+    const initTimer = setTimeout(runSync, 15000);
+    // Every 5 minutes (300,000 ms)
+    const fiveMinInterval = setInterval(runSync, 5 * 60 * 1000);
+
+    return () => {
+      clearTimeout(initTimer);
+      clearInterval(fiveMinInterval);
+    };
   }, []);
 
   const [vibe, setVibe] = useState<VibeType>(() => {
@@ -100,13 +163,12 @@ export default function App() {
     return DEFAULT_TABS;
   });
 
-  const [headerConfig, setHeaderConfig] = useState<HeaderConfig>(() => {
+  const [headerConfig] = useState<HeaderConfig>(() => {
     return getFromStorage<HeaderConfig>('STORE_HEADER', { logoScale: 1, headerBg: '#ffffff' });
   });
 
   const [activeTabId, setActiveTabId] = useState<string>('fast-easy-money');
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
   const [savedScrollY, setSavedScrollY] = useState<number | null>(null);
   const [editingCard, setEditingCard] = useState<CardData | null>(null);
@@ -123,17 +185,19 @@ export default function App() {
     const savedOverrides = getFromStorage<Record<string, Partial<CardData>>>(STORE_DATA, {});
     const savedOrder = getFromStorage<string[]>(STORE_ORDER, []);
 
-    const merged = allInitial.map((c) => {
-      const override = savedOverrides[c.id];
-      if (override) {
-        return { ...c, ...override };
-      }
-      return c;
-    });
+    const merged = allInitial
+      .filter((c) => !DUPLICATE_IDS_TO_REMOVE.has(c.id))
+      .map((c) => {
+        const override = savedOverrides[c.id];
+        if (override) {
+          return { ...c, ...override };
+        }
+        return c;
+      });
 
-    // Add any completely custom cards created in storage
+    // Add any completely custom cards created in storage (excluding blacklisted duplicates)
     Object.keys(savedOverrides).forEach((key) => {
-      if (!allInitial.some((c) => c.id === key)) {
+      if (!DUPLICATE_IDS_TO_REMOVE.has(key) && !allInitial.some((c) => c.id === key)) {
         const custom = savedOverrides[key] as CardData;
         if (custom && !custom.deleted) {
           merged.push(custom);
@@ -141,7 +205,7 @@ export default function App() {
       }
     });
 
-    const activeList = merged.filter((c) => !c.deleted);
+    const activeList = merged.filter((c) => !c.deleted && !DUPLICATE_IDS_TO_REMOVE.has(c.id));
 
     // Apply saved order if present and not legacy default order
     if (savedOrder && Array.isArray(savedOrder) && savedOrder.length > 0) {
@@ -164,6 +228,10 @@ export default function App() {
   const [engines, setEngines] = useState<EngineData[]>(INITIAL_ENGINES);
   const [details, setDetails] = useState<Record<string, CardDetail>>(() => {
     return getFromStorage<Record<string, CardDetail>>(STORE_DETAIL, {});
+  });
+
+  const [customTexts, setCustomTexts] = useState<CustomTextItem[]>(() => {
+    return getCustomTexts();
   });
 
   const tabLogoInputRef = useRef<HTMLInputElement>(null);
@@ -218,8 +286,8 @@ export default function App() {
     } catch {}
     setIsStaffLoginOpen(false);
     setIsEditing(true);
-    setIsWorkerAdminOpen(true); // Open Worker Admin suite on login
-    logWorkerAction('Staff User Onib1127 Authenticated');
+    setIsWorkerAdminOpen(true);
+    logWorkerAction('Staff User Authenticated');
   };
 
   const handleLockStaff = () => {
@@ -282,7 +350,7 @@ export default function App() {
     const updated = { ...details, [cardId]: newDetail };
     setDetails(updated);
     saveToStorage(STORE_DETAIL, updated);
-    logWorkerAction(`Updated Secret Sauce Note/Images for card #${cardId}`, newDetail);
+    logWorkerAction(`Updated guide & proof photos for card #${cardId}`, newDetail);
   };
 
   const handleSaveCardModal = (updated: CardData) => {
@@ -396,65 +464,22 @@ export default function App() {
     setActiveTabId(newTabId);
   };
 
-  const handleRenameTab = (tab: TabConfig) => {
-    const newLabel = window.prompt('Rename category tab:', tab.label);
-    if (!newLabel || !newLabel.trim()) return;
-    const newTabs = tabs.map((t) => (t.id === tab.id ? { ...t, label: newLabel.trim() } : t));
-    setTabs(newTabs);
-    saveToStorage(STORE_TABS, newTabs);
-    logWorkerAction(`Renamed tab "${tab.label}" to "${newLabel.trim()}"`);
-  };
-
-  const handleDeleteTab = (tab: TabConfig) => {
-    if (tabs.length <= 1) {
-      window.alert('You must keep at least one category tab.');
-      return;
-    }
-    if (!window.confirm(`Delete tab "${tab.label}" and all its squares?`)) return;
-    const newTabs = tabs.filter((t) => t.id !== tab.id);
-    setTabs(newTabs);
-    saveToStorage(STORE_TABS, newTabs);
-
-    // Mark cards in this tab as deleted
-    const newCards = cards.filter((c) => c.tabId !== tab.id);
-    setCards(newCards);
-
-    const savedOverrides = getFromStorage<Record<string, Partial<CardData>>>(STORE_DATA, {});
-    cards.forEach((c) => {
-      if (c.tabId === tab.id) {
-        savedOverrides[c.id] = { deleted: true };
-      }
+  const handleAddText = () => {
+    const newItem = addCustomText({
+      targetTabId: activeTabId,
+      text: '✨ Type Your Custom Text Here',
+      fontSize: 24,
+      xPercent: 50,
+      yPx: 20,
+      color: '#fbbf24',
+      bgColor: 'rgba(15, 23, 42, 0.85)',
+      fontWeight: '900',
+      hasShadow: true,
+      hasBorder: true,
+      borderColor: '#f59e0b',
     });
-    saveToStorage(STORE_DATA, savedOverrides);
-    saveToStorage(STORE_ORDER, newCards.map((c) => c.id));
-    logWorkerAction(`Deleted tab "${tab.label}" and its associated cards`);
-
-    if (activeTabId === tab.id) {
-      setActiveTabId(newTabs[0]?.id || 'fast-easy-money');
-    }
-  };
-
-  const handlePickTabLogo = (tab: TabConfig) => {
-    pendingTabLogoIdRef.current = tab.id;
-    if (tabLogoInputRef.current) {
-      tabLogoInputRef.current.click();
-    }
-  };
-
-  const handleTabLogoFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    const targetId = pendingTabLogoIdRef.current;
-    if (!file || !targetId) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const src = String(reader.result);
-      const newTabs = tabs.map((t) => (t.id === targetId ? { ...t, logoUrl: src } : t));
-      setTabs(newTabs);
-      saveToStorage(STORE_TABS, newTabs);
-      pendingTabLogoIdRef.current = null;
-      if (tabLogoInputRef.current) tabLogoInputRef.current.value = '';
-    };
-    reader.readAsDataURL(file);
+    setCustomTexts(getCustomTexts());
+    logWorkerAction(`Added custom text annotation: "${newItem.text}" on tab ${activeTabId}`);
   };
 
   const handleReset = () => {
@@ -495,30 +520,28 @@ export default function App() {
         accept="image/*"
         hidden
         id="tab-logo-file-picker"
-        onChange={handleTabLogoFile}
       />
 
       <main className="site-main" id="site-main">
-        {/* User Lounge Status Strip */}
+        {/* User Identity Strip */}
         <div
           id="user-lounge-quickbar"
           className="w-full max-w-[1240px] mx-auto px-3 sm:px-4 mb-3"
         >
           <div className="bg-slate-900/80 backdrop-blur-md border border-cyan-500/30 rounded-2xl p-2.5 md:p-3 flex flex-wrap items-center justify-between gap-3 shadow-lg shadow-cyan-950/40 text-xs">
-            {/* Left: User Profile & Avatar Pill */}
+            {/* Left: User Profile & Avatar */}
             {userProfile ? (
               <div className="flex items-center gap-2.5">
                 <button
                   type="button"
                   onClick={() => setIsProfileModalOpen(true)}
                   className="flex items-center gap-2 p-1.5 pr-3 rounded-xl bg-slate-800/90 hover:bg-slate-750 border border-slate-700/70 text-white transition cursor-pointer group"
-                  title="View your Avatar Profile & # Identity"
+                  title="View your Avatar Profile & Identity"
                 >
                   <WiiFaceIcon
                     avatar={getAvatarById(userProfile.avatarId)}
                     customPfpUrl={userProfile.customPfpUrl}
                     size={28}
-                    frame={userProfile.equippedFrame}
                   />
                   <div className="text-left">
                     <div className="font-extrabold text-white group-hover:text-cyan-300 transition flex items-center gap-1 leading-tight">
@@ -535,29 +558,32 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setIsOnboardingUsernameOpen(true)}
-                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-400 to-amber-300 text-slate-950 font-black transition cursor-pointer flex items-center gap-2"
+                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-400 to-amber-300 text-slate-950 font-black transition cursor-pointer flex items-center gap-2 shadow hover:opacity-95"
               >
                 <span>Create Account & Get Unique Avatar</span>
                 <span>🎮</span>
               </button>
             )}
 
-            {/* Right: Quick Launchers */}
+            {/* Right: Quick login or profile trigger */}
             <div className="flex items-center gap-2 ml-auto">
-              {/* Toggle Chat Widget */}
-              <button
-                type="button"
-                onClick={() => setIsAIChatOpen(!isAIChatOpen)}
-                className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                  isAIChatOpen
-                    ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/25'
-                    : 'bg-slate-800 text-cyan-300 hover:bg-slate-700 border border-cyan-500/40'
-                }`}
-                title="Toggle Fixed Top-Right Chat"
-              >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Chat</span>
-              </button>
+              {userProfile ? (
+                <button
+                  type="button"
+                  onClick={() => setIsProfileModalOpen(true)}
+                  className="px-3 py-1.5 rounded-xl bg-slate-800 text-cyan-300 hover:bg-slate-700 border border-cyan-500/40 font-bold transition cursor-pointer"
+                >
+                  Account Settings
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsOnboardingUsernameOpen(true)}
+                  className="px-3 py-1.5 rounded-xl bg-slate-800 text-cyan-300 hover:bg-slate-700 border border-cyan-500/40 font-bold transition cursor-pointer"
+                >
+                  Sign In
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -569,7 +595,15 @@ export default function App() {
           onClick={handleCloseDrawer}
         />
 
-        <section id="arsenal" className="section">
+        <section id="arsenal" className="section relative">
+          {/* Custom Floating Text Annotations & Banners */}
+          <CustomTextLayer
+            items={customTexts}
+            isEditing={isEditing && isStaffAuthenticated}
+            activeTabId={activeTabId}
+            onItemsChange={setCustomTexts}
+          />
+
           {/* Edit Mode Status Bar */}
           {isEditing && isStaffAuthenticated && (
             <div
@@ -603,12 +637,12 @@ export default function App() {
                 </span>
               </div>
               <div style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '11px' }}>
-                Click <strong>HIDE / UNHIDE</strong> on any square to toggle its public visibility.
+                Click <strong>HIDE / UNHIDE</strong> on any square &bull; Click <strong>+ TEXT</strong> to add floating notes anywhere.
               </div>
             </div>
           )}
 
-          {/* Engines (Shown in Free Money tab) */}
+          {/* Engines (Shown in Free Money tab if present) */}
           {visibleEngines.length > 0 && (
             <div className="engines" id="engines-container">
               {visibleEngines.map((engine) => (
@@ -662,7 +696,7 @@ export default function App() {
                     }}
                   />
 
-                  {/* Inline Drawer when expanded */}
+                  {/* Inline Drawer when expanded - offers notes & step-by-step completion photos */}
                   {isExp && (
                     <CardDrawer
                       card={card}
@@ -712,6 +746,7 @@ export default function App() {
         onToggleEditing={() => setIsEditing(!isEditing)}
         onAddSquare={handleAddSquare}
         onAddTab={handleAddTab}
+        onAddText={handleAddText}
         onReset={handleReset}
       />
 
@@ -730,38 +765,23 @@ export default function App() {
         tabsCount={tabs.length}
       />
 
-      {/* AI Website Chat Widget (Fixed Top-Right Corner) */}
-      <AIWebsiteChatWidget
-        isOpen={isAIChatOpen}
-        userProfile={userProfile}
-        onClose={() => setIsAIChatOpen(false)}
-        onSelectItemToBuy={(item) => setCheckoutItem(item)}
-        onOpenProfileModal={() => setIsProfileModalOpen(true)}
-        onOpenAvatarSpinner={() => setIsAvatarSpinnerOpen(true)}
-        onProfileUpdated={(updated) => {
-          setUserProfile(updated);
-          syncUserProfile(updated);
-        }}
-      />
-
       {/* Onboarding Step 1: Username Selection & Authentication Modal */}
       <UsernameOnboardingModal
         isOpen={isOnboardingUsernameOpen && !userProfile}
-        onUsernameSubmitted={(chosenUsername, chosenPassword, email) => {
+        onUsernameSubmitted={(chosenUsername, chosenEmail, chosenPassword) => {
           setPendingUsername(chosenUsername);
+          setPendingEmail(chosenEmail);
           setPendingPassword(chosenPassword);
-          setPendingEmail(email);
           setIsOnboardingUsernameOpen(false);
           setIsAvatarSpinnerOpen(true);
         }}
         onLoggedIn={(loggedInProfile) => {
           setUserProfile(loggedInProfile);
           setIsOnboardingUsernameOpen(false);
-          setIsAIChatOpen(false);
         }}
       />
 
-      {/* Onboarding Step 2: 100-Slot Avatar Roulette Spinner */}
+      {/* Onboarding Step 2: 100-Slot Avatar Roulette Spinner (The ONLY avatar spin during signup) */}
       <WiiAvatarSpinnerModal
         isOpen={isAvatarSpinnerOpen}
         username={userProfile?.username || pendingUsername || 'Winner'}
@@ -770,13 +790,12 @@ export default function App() {
         onAvatarClaimed={(newProfile) => {
           setUserProfile(newProfile);
           setIsAvatarSpinnerOpen(false);
-          setIsAIChatOpen(false);
           setPendingPassword('');
           setPendingEmail('');
         }}
       />
 
-      {/* User Profile & Avatar Settings Modal */}
+      {/* User Profile & Account Settings Modal */}
       <UserProfileModal
         isOpen={isProfileModalOpen}
         userProfile={userProfile}
@@ -785,50 +804,11 @@ export default function App() {
           setUserProfile(updated);
           syncUserProfile(updated);
         }}
-        onOpenShopItem={(item) => setCheckoutItem(item)}
-        onOpenAvatarSpinner={() => setIsAvatarSpinnerOpen(true)}
         onLogout={() => {
           setUserProfile(null);
           setIsProfileModalOpen(false);
           setIsOnboardingUsernameOpen(true);
         }}
-      />
-
-      {/* Crypto Micro-Checkout Modal */}
-      <CryptoCheckoutModal
-        item={checkoutItem}
-        userProfile={userProfile}
-        isOpen={!!checkoutItem}
-        onClose={() => setCheckoutItem(null)}
-        onPurchaseSuccess={(updated) => {
-          setUserProfile(updated);
-          syncUserProfile(updated);
-          setCheckoutItem(null);
-        }}
-      />
-
-      {/* Mobile Bottom Navigation Bar (Gemsloot / Freecash 5-tab docked bar) */}
-      <MobileBottomNav
-        tabs={tabs}
-        activeTabId={activeTabId}
-        userProfile={userProfile}
-        onSelectTab={(tabId) => {
-          setActiveTabId(tabId);
-          const section = document.getElementById('arsenal');
-          if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }}
-        onOpenChat={() => setIsAIChatOpen(true)}
-        onOpenProfile={() => {
-          if (userProfile) {
-            setIsProfileModalOpen(true);
-          } else {
-            setIsOnboardingUsernameOpen(true);
-          }
-        }}
-        isStaffAuthenticated={isStaffAuthenticated}
-        onOpenStaffLogin={() => setIsStaffLoginOpen(true)}
-        isEditing={isEditing}
-        onToggleEditing={() => setIsEditing(!isEditing)}
       />
     </div>
   );

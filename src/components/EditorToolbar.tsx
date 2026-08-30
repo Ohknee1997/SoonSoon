@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock, Unlock, Plus, Settings, RotateCcw, Edit2, CheckSquare, ShieldAlert } from 'lucide-react';
+import { Lock, Unlock, Plus, Settings, RotateCcw, Edit2, CheckSquare, ShieldAlert, Type } from 'lucide-react';
 
 interface EditorToolbarProps {
   isStaffAuthenticated: boolean;
@@ -9,6 +9,7 @@ interface EditorToolbarProps {
   onToggleEditing: () => void;
   onAddSquare: () => void;
   onAddTab: () => void;
+  onAddText?: () => void;
   onReset: () => void;
   onOpenSettings?: () => void;
   onOpenWorkerAdmin?: () => void;
@@ -22,6 +23,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
   onToggleEditing,
   onAddSquare,
   onAddTab,
+  onAddText,
   onReset,
   onOpenSettings,
   onOpenWorkerAdmin,
@@ -33,11 +35,11 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         <button
           id="ohk-staff-signin-btn"
           type="button"
-          className="ohk-btn ohk-btn-discrete flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-amber-300 border border-slate-700/60 shadow-lg text-[11px] font-bold transition cursor-pointer"
+          className="ohk-btn ohk-btn-discrete flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-amber-300 border border-slate-700/80 shadow-2xl text-[11.5px] font-bold transition cursor-pointer"
           onClick={onOpenStaffLogin}
           title="Staff & Admin Sign-In (Restricted)"
         >
-          <Lock size={13} className="text-amber-400/80" />
+          <Lock size={13} className="text-amber-400" />
           <span>Staff Sign-In</span>
         </button>
       </div>
@@ -63,7 +65,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
 
       {isEditing && (
         <p id="ohk-hint" className="hidden lg:inline-block">
-          Drag squares &middot; Click to edit &middot; Trash to delete
+          Drag squares &middot; Click to edit &middot; +Text anywhere
         </p>
       )}
 
@@ -89,6 +91,18 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
             <Plus size={13} />
             <span>Tab</span>
           </button>
+          {onAddText && (
+            <button
+              id="ohk-add-text"
+              type="button"
+              className="ohk-btn ohk-btn-ghost text-cyan-300 hover:text-cyan-200 border-cyan-500/40 hover:bg-cyan-950/40 flex items-center gap-1 font-bold shadow-sm"
+              onClick={onAddText}
+              title="Add customizable text anywhere on the page"
+            >
+              <Type size={13} className="text-cyan-400" />
+              <span>+ Text</span>
+            </button>
+          )}
           {onOpenSettings && (
             <button
               id="ohk-settings"

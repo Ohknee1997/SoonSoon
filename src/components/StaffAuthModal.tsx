@@ -18,6 +18,8 @@ export const StaffAuthModal: React.FC<StaffAuthModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
+  const [openInNewTab, setOpenInNewTab] = useState(true);
+
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -35,6 +37,18 @@ export const StaffAuthModal: React.FC<StaffAuthModalProps> = ({
         setPassword('');
         setError(null);
         logAuthEvent('staff_login', 'Onib1127', true, { role: 'Administrator / Worker' });
+        try {
+          sessionStorage.setItem('ohk_staff_authenticated', 'true');
+        } catch {}
+
+        if (openInNewTab) {
+          const staffUrl = `${window.location.origin}${window.location.pathname}?staff_view=1`;
+          try {
+            window.open(staffUrl, '_blank');
+          } catch (e) {
+            console.warn('Popup blocked, falling back to modal:', e);
+          }
+        }
         onSuccess();
       } else {
         setIsAuthenticating(false);
@@ -48,7 +62,6 @@ export const StaffAuthModal: React.FC<StaffAuthModalProps> = ({
     <div
       id="staff-auth-modal"
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
-      onClick={onClose}
     >
       <div
         className="relative w-full max-w-sm bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden p-6 text-white"
@@ -121,6 +134,17 @@ export const StaffAuthModal: React.FC<StaffAuthModalProps> = ({
               />
             </div>
           </div>
+
+          {/* New Window Option */}
+          <label className="flex items-center gap-2.5 py-1 px-1 text-xs text-slate-300 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={openInNewTab}
+              onChange={(e) => setOpenInNewTab(e.target.checked)}
+              className="w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-500 cursor-pointer accent-amber-500"
+            />
+            <span className="font-semibold text-amber-300">Open Staff Suite in new window / tab</span>
+          </label>
 
           <button
             type="submit"

@@ -1475,19 +1475,28 @@ body.is-editing .ohk-trash {
 /* Toolbar & Modal */
 #ohk-toolbar {
   position: fixed;
-  right: 16px;
-  bottom: 16px;
+  right: 20px;
+  bottom: 28px;
   z-index: 60;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px;
-  border: 1px solid var(--hairline);
+  padding: 8px 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 18px 40px -18px rgba(15, 23, 42, 0.25);
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.65), 0 0 20px rgba(245, 158, 11, 0.15);
+}
+
+@media (max-width: 640px) {
+  #ohk-toolbar {
+    right: 12px;
+    bottom: 24px;
+    padding: 6px 10px;
+    gap: 6px;
+  }
 }
 
 [data-vibe="goth"] #ohk-toolbar,
@@ -3539,8 +3548,8 @@ body.is-editing .ohk-trash {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    gap: 6px;
-    padding: 2px 0 4px;
+    gap: 4px;
+    padding: 1px 0 3px;
     margin: 0;
     width: 100%;
   }
@@ -3551,56 +3560,56 @@ body.is-editing .ohk-trash {
 
   .tab {
     flex-shrink: 0;
-    padding: 7px 13px !important;
-    font-size: 11.5px !important;
+    padding: 4px 10px !important;
+    font-size: 11px !important;
     font-weight: 800 !important;
-    letter-spacing: 0.03em !important;
+    letter-spacing: 0.02em !important;
     border-radius: 9999px !important;
-    height: 30px !important;
+    height: 26px !important;
     white-space: nowrap !important;
-    gap: 6px !important;
+    gap: 4px !important;
   }
 
   /* Site main padding for bottom navigation clearance */
   .site-main {
-    padding: 8px 10px 96px !important;
+    padding: 4px 6px 72px !important;
   }
 
-  /* P2E / Freecash style high-density cards grid */
+  /* High-density cards grid to fit all offers on one screen without scrolling */
   .grid {
     display: flex !important;
     flex-direction: column !important;
-    gap: 8px !important;
+    gap: 5px !important;
     width: 100% !important;
   }
 
-  /* Freecash compact horizontal offer card */
+  /* Ultra-compact horizontal offer card */
   .card.app-card {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 9px 10px !important;
-    border-radius: 12px !important;
-    background: rgba(255, 255, 255, 0.76) !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, 0.82) !important;
     backdrop-filter: blur(14px) !important;
     -webkit-backdrop-filter: blur(14px) !important;
-    border: 1.2px solid rgba(255, 255, 255, 0.7) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-    gap: 8px !important;
+    border: 1.2px solid rgba(255, 255, 255, 0.75) !important;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05) !important;
+    gap: 6px !important;
     cursor: pointer;
     min-height: auto !important;
   }
 
   [data-vibe="goth"] .card.app-card {
-    background: rgba(18, 12, 28, 0.82) !important;
-    border-color: rgba(255, 255, 255, 0.12) !important;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4) !important;
+    background: rgba(18, 12, 28, 0.88) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
   }
 
   [data-vibe="greed"] .card.app-card {
-    background: rgba(9, 24, 18, 0.82) !important;
-    border-color: rgba(34, 197, 94, 0.25) !important;
+    background: rgba(9, 24, 18, 0.88) !important;
+    border-color: rgba(34, 197, 94, 0.3) !important;
   }
 
   .card.app-card:hover,
@@ -3619,15 +3628,15 @@ body.is-editing .ohk-trash {
   }
 
   .logo-tile {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    max-height: 44px !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    max-height: 36px !important;
     margin: 0 !important;
     padding: 0 !important;
-    border-radius: 10px !important;
-    background: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -3635,23 +3644,23 @@ body.is-editing .ohk-trash {
   }
 
   .logo-tile img {
-    width: 36px !important;
-    height: 36px !important;
-    max-height: 36px !important;
+    width: 28px !important;
+    height: 28px !important;
+    max-height: 28px !important;
     object-fit: contain !important;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15)) !important;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.15)) !important;
   }
 
   .avatar {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
     margin: 0 !important;
-    border-radius: 10px !important;
+    border-radius: 8px !important;
   }
 
   .avatar-initials {
-    font-size: 16px !important;
+    font-size: 13px !important;
   }
 
   /* Card Info & Details Center Column */
@@ -3663,14 +3672,14 @@ body.is-editing .ohk-trash {
     text-align: left !important;
     flex: 1 !important;
     min-width: 0 !important;
-    padding: 0 4px !important;
+    padding: 0 2px !important;
   }
 
   .card-name {
-    font-size: 13.5px !important;
+    font-size: 12.5px !important;
     font-weight: 800 !important;
     text-align: left !important;
-    line-height: 1.2 !important;
+    line-height: 1.15 !important;
     color: var(--text-bright) !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -3679,7 +3688,7 @@ body.is-editing .ohk-trash {
   }
 
   .card-sub {
-    font-size: 10.5px !important;
+    font-size: 9.5px !important;
     text-align: left !important;
     color: var(--text-dim) !important;
     margin-top: 1px !important;
@@ -3694,58 +3703,58 @@ body.is-editing .ohk-trash {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    gap: 4px !important;
-    margin: 3px 0 0 !important;
+    gap: 3px !important;
+    margin: 1px 0 0 !important;
   }
 
   .payout-amt {
-    font-size: 14px !important;
+    font-size: 12.5px !important;
     font-weight: 900 !important;
     color: #16a34a !important;
     line-height: 1 !important;
   }
 
   .payout-tag {
-    font-size: 9px !important;
-    height: 16px !important;
-    padding: 0 5px !important;
-    border-radius: 4px !important;
+    font-size: 8px !important;
+    height: 14px !important;
+    padding: 0 4px !important;
+    border-radius: 3px !important;
     font-weight: 800 !important;
     letter-spacing: 0.02em !important;
   }
 
   /* Promo code row: compact inline chip */
   .code-row {
-    margin: 4px 0 0 !important;
-    padding: 2px 6px !important;
-    min-height: 22px !important;
-    gap: 4px !important;
-    border-radius: 6px !important;
+    margin: 2px 0 0 !important;
+    padding: 1px 5px !important;
+    min-height: 18px !important;
+    gap: 3px !important;
+    border-radius: 4px !important;
     width: fit-content !important;
     max-width: 100% !important;
   }
 
   .code-key {
-    font-size: 8px !important;
+    font-size: 7.5px !important;
     font-weight: 800 !important;
     color: #64748b !important;
   }
 
   .code-value {
-    font-size: 10.5px !important;
+    font-size: 9.5px !important;
     font-weight: 800 !important;
   }
 
   .code-copy {
-    padding: 1px 5px !important;
-    height: 18px !important;
-    font-size: 8.5px !important;
+    padding: 0 4px !important;
+    height: 15px !important;
+    font-size: 7.5px !important;
     font-weight: 800 !important;
-    border-radius: 4px !important;
+    border-radius: 3px !important;
   }
 
   .code-none {
-    font-size: 9.5px !important;
+    font-size: 8.5px !important;
   }
 
   /* Card Action Buttons (Right Column) */
@@ -3759,26 +3768,26 @@ body.is-editing .ohk-trash {
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 4px !important;
-    width: 78px !important;
+    gap: 3px !important;
+    width: 68px !important;
   }
 
   .signup-btn {
-    height: 28px !important;
-    min-height: 28px !important;
-    padding: 0 6px !important;
-    font-size: 10.5px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 0 4px !important;
+    font-size: 9.5px !important;
     font-weight: 800 !important;
-    border-radius: 6px !important;
+    border-radius: 5px !important;
     justify-content: center !important;
     letter-spacing: 0.02em !important;
   }
 
   .secret-btn {
-    height: 20px !important;
-    min-height: 20px !important;
-    padding: 0 4px !important;
-    font-size: 8.5px !important;
+    height: 18px !important;
+    min-height: 18px !important;
+    padding: 0 3px !important;
+    font-size: 8px !important;
     line-height: 1 !important;
     border-radius: 4px !important;
     justify-content: center !important;
@@ -3838,34 +3847,22 @@ body.is-editing .ohk-trash {
 
   /* Footer on Mobile */
   .site-footer {
-    padding: 20px 12px 100px !important;
+    padding: 24px 16px 40px !important;
   }
 
   /* Edit toolbar on mobile */
   #ohk-toolbar {
-    bottom: 68px !important;
+    bottom: 24px !important;
     right: 12px !important;
     left: auto !important;
-    padding: 4px 8px !important;
-  }
-
-  /* Mobile bottom bar touch ergonomics */
-  .mobile-bottom-bar {
-    min-height: 60px;
-    padding-bottom: max(6px, env(safe-area-inset-bottom));
-  }
-
-  .mobile-nav-item {
-    min-height: 48px;
-    min-width: 48px;
-    touch-action: manipulation;
+    padding: 6px 10px !important;
   }
 
   .stake-chat-container {
     width: min(94vw, 380px) !important;
     height: 440px !important;
     right: 3vw !important;
-    bottom: 68px !important;
+    bottom: 24px !important;
   }
 }
 
