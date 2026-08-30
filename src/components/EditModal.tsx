@@ -28,6 +28,8 @@ export const EditModal: React.FC<EditModalProps> = ({
   const [size, setSize] = useState<'s' | 'm' | 'l' | 'xl'>('m');
   const [color, setColor] = useState('#34d399');
   const [rating, setRating] = useState<number>(0);
+  const [orderNumber, setOrderNumber] = useState<string>('');
+  const [showStarsTopper, setShowStarsTopper] = useState<boolean>(false);
   const [tabId, setTabId] = useState('');
   const [hidden, setHidden] = useState<boolean>(false);
   const [imgUrl, setImgUrl] = useState('');
@@ -45,6 +47,8 @@ export const EditModal: React.FC<EditModalProps> = ({
       setSize(card.customSize || 'm');
       setColor(card.customColor || tripletToHex(card.accentRgb || '59, 130, 246'));
       setRating(card.rating || 0);
+      setOrderNumber(card.orderNumber !== undefined && card.orderNumber !== null ? String(card.orderNumber) : '');
+      setShowStarsTopper(Boolean(card.showStarsTopper));
       setTabId(card.tabId || tabs[0]?.id || 'casino-codes');
       setHidden(Boolean(card.hidden));
       setImgUrl(card.customImg && !card.customImg.startsWith('data:') ? card.customImg : '');
@@ -79,6 +83,7 @@ export const EditModal: React.FC<EditModalProps> = ({
         : undefined;
 
     const triplet = hexToRgbTriplet(color) || card.accentRgb;
+    const parsedOrder = orderNumber.trim() !== '' ? Number(orderNumber) : undefined;
 
     const updated: CardData = {
       ...card,
@@ -91,6 +96,8 @@ export const EditModal: React.FC<EditModalProps> = ({
       customSize: size,
       customColor: color,
       rating: rating,
+      orderNumber: isNaN(Number(parsedOrder)) ? undefined : parsedOrder,
+      showStarsTopper: showStarsTopper,
       accentRgb: triplet,
       tabId: tabId || card.tabId,
       hidden: hidden,
@@ -205,7 +212,59 @@ export const EditModal: React.FC<EditModalProps> = ({
           />
         </label>
 
-        <div className="ohk-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.2fr', gap: '8px' }}>
+        <div className="ohk-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+          <label className="ohk-field">
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <strong>Top-Left Order #</strong>
+              <span style={{ fontSize: '10px', color: '#38bdf8' }}>e.g. 1, 2, 3</span>
+            </span>
+            <input
+              id="ohk-f-order-num"
+              type="number"
+              min="1"
+              max="999"
+              placeholder="Leave blank for none"
+              value={orderNumber}
+              onChange={(e) => setOrderNumber(e.target.value)}
+              style={{ fontWeight: 'bold' }}
+            />
+          </label>
+
+          <label className="ohk-field">
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <strong>5 Golden Stars Banner</strong>
+              <span style={{ fontSize: '10px', color: '#f59e0b' }}>Top of Logo</span>
+            </span>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                height: '38px',
+                padding: '0 10px',
+                background: showStarsTopper ? 'rgba(245, 158, 11, 0.15)' : 'rgba(0, 0, 0, 0.25)',
+                border: showStarsTopper ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '8px',
+                cursor: 'pointer',
+              }}
+              onClick={() => setShowStarsTopper(!showStarsTopper)}
+            >
+              <input
+                type="checkbox"
+                id="ohk-f-stars-topper"
+                checked={showStarsTopper}
+                onChange={(e) => setShowStarsTopper(e.target.checked)}
+                style={{ width: '16px', height: '16px', accentColor: '#f59e0b', cursor: 'pointer' }}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <span style={{ fontSize: '12px', fontWeight: '800', color: showStarsTopper ? '#fbbf24' : '#94a3b8' }}>
+                {showStarsTopper ? '★★★★★ ON' : '☆ Off'}
+              </span>
+            </div>
+          </label>
+        </div>
+
+        <div className="ohk-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1.2fr', gap: '8px' }}>
           <label className="ohk-field">
             <span>Size</span>
             <select

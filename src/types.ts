@@ -23,6 +23,8 @@ export interface CardData {
   customColor?: string;
   customImg?: string;
   rating?: number; // 1-5 stars
+  orderNumber?: number; // Top-left order badge number (e.g. 1, 2, 3, 4, 5)
+  showStarsTopper?: boolean; // Golden 5-stars banner over the top of the logo
   tabId: string;
   deleted?: boolean;
   hidden?: boolean;

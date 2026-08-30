@@ -410,7 +410,9 @@ export function generateFullStateGoogleDocFormattedText(): string {
     docLines.push('Default partner offers active.\n');
   } else {
     cardsList.forEach((c: any, idx: number) => {
-      docLines.push(`[Card #${idx + 1}] ${c.name} (Tab: ${c.tabId || 'default'})`);
+      const orderTag = c.orderNumber !== undefined && c.orderNumber !== null ? ` | Order Rank: #${c.orderNumber}` : '';
+      const starTag = c.showStarsTopper ? ' [★★★★★ 5-Star Topper Banner]' : (c.rating ? ` [${c.rating}★ Rating]` : '');
+      docLines.push(`[Card #${idx + 1}] ${c.name} (Tab: ${c.tabId || 'default'}${orderTag})${starTag}`);
       docLines.push(`  - Payout / Bonus:  ${c.payout || 'N/A'}`);
       docLines.push(`  - Promo Code:      ${c.code || 'None'}`);
       docLines.push(`  - Signup URL:      ${c.signupUrl || 'N/A'}`);

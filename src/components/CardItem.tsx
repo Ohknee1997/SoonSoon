@@ -285,6 +285,17 @@ export const CardItem: React.FC<CardItemProps> = ({
       )}
 
       <div className="card-top">
+        {/* Top-Left Custom Ordering Badge */}
+        {card.orderNumber !== undefined && card.orderNumber !== null && (
+          <div
+            className="ohk-order-badge"
+            id={`card-order-${card.id}`}
+            title={`Rank #${card.orderNumber}`}
+          >
+            <span>#{card.orderNumber}</span>
+          </div>
+        )}
+
         {card.rating && (
           <div className="ohk-rating" style={{ position: 'absolute', top: '8px', right: '40px' }}>
             {Array.from({ length: card.rating }).map((_, i) => (
@@ -292,13 +303,44 @@ export const CardItem: React.FC<CardItemProps> = ({
             ))}
           </div>
         )}
+
         {logoSrc ? (
           <div className="logo-tile" id={`card-logo-tile-${card.id}`}>
+            {/* 5 Golden Stars Topper perfectly fitted over top of logo */}
+            {card.showStarsTopper && (
+              <div
+                className="ohk-stars-topper"
+                id={`card-stars-topper-${card.id}`}
+                title="5 Golden Stars Featured Partner"
+                aria-label="5 Golden Stars"
+              >
+                <span className="star-char">★</span>
+                <span className="star-char">★</span>
+                <span className="star-char">★</span>
+                <span className="star-char">★</span>
+                <span className="star-char">★</span>
+              </div>
+            )}
             <img src={logoSrc} alt={`${card.name} logo`} loading="lazy" decoding="async" />
             <span className="avatar-glow" aria-hidden="true" />
           </div>
         ) : (
           <div className="avatar" id={`card-avatar-${card.id}`}>
+            {/* 5 Golden Stars Topper over avatar */}
+            {card.showStarsTopper && (
+              <div
+                className="ohk-stars-topper"
+                id={`card-stars-topper-${card.id}`}
+                title="5 Golden Stars Featured Partner"
+                aria-label="5 Golden Stars"
+              >
+                <span className="star-char">★</span>
+                <span className="star-char">★</span>
+                <span className="star-char">★</span>
+                <span className="star-char">★</span>
+                <span className="star-char">★</span>
+              </div>
+            )}
             <span className="avatar-initials">{initialsOf(card.name)}</span>
             <span className="avatar-glow" aria-hidden="true" />
           </div>

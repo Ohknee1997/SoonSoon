@@ -20,6 +20,8 @@ export const INITIAL_FAST_EASY_CARDS: CardData[] = [
     signupLabel: 'SIGN UP',
     tabId: 'fast-easy-money',
     hidden: false,
+    orderNumber: 1,
+    showStarsTopper: true,
   },
   {
     id: 'fast-gemsloot',
@@ -34,6 +36,8 @@ export const INITIAL_FAST_EASY_CARDS: CardData[] = [
     signupLabel: 'SIGN UP',
     tabId: 'fast-easy-money',
     hidden: false,
+    orderNumber: 2,
+    showStarsTopper: true,
   },
   {
     id: 'fast-freecash',
@@ -48,6 +52,8 @@ export const INITIAL_FAST_EASY_CARDS: CardData[] = [
     signupLabel: 'SIGN UP',
     tabId: 'fast-easy-money',
     hidden: false,
+    orderNumber: 3,
+    showStarsTopper: true,
   },
   {
     id: 'fast-kalshi',
@@ -61,6 +67,8 @@ export const INITIAL_FAST_EASY_CARDS: CardData[] = [
     signupLabel: 'SIGN UP',
     tabId: 'fast-easy-money',
     hidden: false,
+    orderNumber: 4,
+    showStarsTopper: true,
   },
   {
     id: 'fast-coinbase',
@@ -74,6 +82,8 @@ export const INITIAL_FAST_EASY_CARDS: CardData[] = [
     signupLabel: 'SIGN UP',
     tabId: 'fast-easy-money',
     hidden: false,
+    orderNumber: 5,
+    showStarsTopper: true,
   },
 ];
 

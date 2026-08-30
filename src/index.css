@@ -632,6 +632,88 @@ body.is-editing .ohk-tab-tools {
   gap: 0;
 }
 
+/* Top-Left Custom Order Ranking Badge */
+.ohk-order-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border: 1.5px solid #38bdf8;
+  color: #38bdf8;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 0 8px rgba(56, 189, 248, 0.35);
+  pointer-events: none;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.card:hover .ohk-order-badge {
+  transform: scale(1.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), 0 0 12px rgba(56, 189, 248, 0.6);
+}
+
+/* 5 Golden Stars Topper - Fits perfectly on the very top of the logo/box barely overlapping */
+.ohk-stars-topper {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5px;
+  padding: 1.5px 8px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.92) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 10px rgba(245, 158, 11, 0.4);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.ohk-stars-topper .star-char {
+  color: #fbbf24;
+  font-size: 11.5px;
+  line-height: 1;
+  text-shadow: 0 0 4px rgba(251, 191, 36, 0.8), 0 1px 2px rgba(0, 0, 0, 0.8);
+  filter: drop-shadow(0 1px 2px rgba(217, 119, 6, 0.6));
+  animation: starGlint 3s infinite ease-in-out;
+}
+
+.ohk-stars-topper .star-char:nth-child(2) { animation-delay: 0.3s; }
+.ohk-stars-topper .star-char:nth-child(3) { animation-delay: 0.6s; }
+.ohk-stars-topper .star-char:nth-child(4) { animation-delay: 0.9s; }
+.ohk-stars-topper .star-char:nth-child(5) { animation-delay: 1.2s; }
+
+@keyframes starGlint {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.15);
+    filter: brightness(1.35) drop-shadow(0 0 6px rgba(251, 191, 36, 1));
+  }
+}
+
+.card:hover .ohk-stars-topper {
+  border-color: #fbbf24;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 16px rgba(251, 191, 36, 0.6);
+}
+
 .logo-tile {
   position: relative;
   display: flex;

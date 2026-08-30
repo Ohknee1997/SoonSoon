@@ -492,8 +492,17 @@ export default function App() {
     window.location.reload();
   };
 
-  // Filter cards for active tab
-  const tabCards = cards.filter((c) => c.tabId === activeTabId);
+  // Filter and sort cards for active tab (Cards with orderNumber sort cleanly to the front/in sequence 1, 2, 3...)
+  const tabCards = [...cards.filter((c) => c.tabId === activeTabId)].sort((a, b) => {
+    const hasOrderA = a.orderNumber !== undefined && a.orderNumber !== null;
+    const hasOrderB = b.orderNumber !== undefined && b.orderNumber !== null;
+    if (hasOrderA && hasOrderB) {
+      return (a.orderNumber as number) - (b.orderNumber as number);
+    }
+    if (hasOrderA) return -1;
+    if (hasOrderB) return 1;
+    return 0;
+  });
   const visibleCards = isEditing && isStaffAuthenticated ? tabCards : tabCards.filter((c) => !c.hidden);
   const hiddenCount = tabCards.filter((c) => c.hidden).length;
   const visibleEngines = activeTabId === 'free-money' ? engines : [];

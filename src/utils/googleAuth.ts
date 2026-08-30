@@ -24,8 +24,15 @@ provider.setCustomParameters({
   prompt: 'select_account',
 });
 
+const ACCESS_TOKEN_STORAGE_KEY = 'ohknee_gdocs_access_token_v1';
 let isSigningIn = false;
-let cachedAccessToken: string | null = null;
+let cachedAccessToken: string | null = (() => {
+  try {
+    return sessionStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) || localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+})();
 
 // Initialize auth state listener. Call this on app load.
 export const initAuth = (
@@ -42,6 +49,10 @@ export const initAuth = (
       }
     } else {
       cachedAccessToken = null;
+      try {
+        sessionStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+        localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+      } catch {}
       if (onAuthFailure) onAuthFailure();
     }
   });
@@ -58,6 +69,10 @@ export const googleSignIn = async (): Promise<{ user: User; accessToken: string 
     }
 
     cachedAccessToken = credential.accessToken;
+    try {
+      sessionStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, credential.accessToken);
+      localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, credential.accessToken);
+    } catch {}
     return { user: result.user, accessToken: cachedAccessToken };
   } catch (error: any) {
     console.error('Google Docs Sign in error:', error);
@@ -68,11 +83,25 @@ export const googleSignIn = async (): Promise<{ user: User; accessToken: string 
 };
 
 export const getAccessToken = (): string | null => {
+  if (!cachedAccessToken) {
+    try {
+      cachedAccessToken = sessionStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) || localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+    } catch {}
+  }
   return cachedAccessToken;
 };
 
 export const setAccessToken = (token: string | null) => {
   cachedAccessToken = token;
+  try {
+    if (token) {
+      sessionStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token);
+      localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token);
+    } else {
+      sessionStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+      localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+    }
+  } catch {}
 };
 
 export const logoutGoogle = async () => {
@@ -80,4 +109,8 @@ export const logoutGoogle = async () => {
     await signOut(auth);
   } catch {}
   cachedAccessToken = null;
+  try {
+    sessionStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+    localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+  } catch {}
 };
