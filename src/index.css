@@ -15,9 +15,9 @@
   --hairline: rgba(255, 255, 255, 0.35);
   --surface: rgba(255, 255, 255, 0.65);
   --surface-hi: rgba(255, 255, 255, 0.85);
-  --radius-card: 16px;
+  --radius-card: 14px;
   --radius-engine: 24px;
-  --max-w: 1280px;
+  --max-w: 100%;
   --font-body: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --dynamic-tint: 13, 148, 136;
   --dynamic-tint-2: 2, 132, 199;
@@ -228,7 +228,7 @@ p {
   top: 0;
   z-index: 40;
   border-bottom: 1px solid rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.35) !important;
+  background: rgba(255, 255, 255, 0.45) !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.08);
@@ -237,15 +237,16 @@ p {
 }
 
 .header-inner {
-  margin: 0;
+  margin: 0 auto;
   width: 100%;
   max-width: 100% !important;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   flex-wrap: nowrap;
-  gap: 16px;
-  padding: 4px 16px 4px 6px;
+  gap: 12px;
+  padding: 6px 16px;
+  box-sizing: border-box;
 }
 
 .brand {
@@ -266,12 +267,13 @@ p {
 }
 
 .ohk-logo-img {
-  height: 120px;
+  height: 44px;
   width: auto;
-  max-width: 380px;
+  max-width: 160px;
   object-fit: contain;
   display: block;
   background: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 
 [data-vibe="goth"] .ohk-logo-img,
@@ -280,7 +282,7 @@ p {
 }
 
 .ohk-logo-svg {
-  height: 114px;
+  height: 42px;
   width: auto;
   display: block;
   background: transparent;
@@ -288,42 +290,45 @@ p {
 
 @media (min-width: 768px) {
   .ohk-logo-img {
-    height: 270px;
-    max-width: 800px;
+    height: 48px;
+    max-width: 180px;
   }
   .ohk-logo-svg {
-    height: 255px;
+    height: 46px;
   }
 }
 
-/* Tabs: Straight thin single row on the same level */
+/* Tabs: Straight single row fitting all 4 tabs up top without scrolling */
 .tabs.tabs-flat-row {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   gap: 8px;
   margin: 0;
   padding: 2px 0;
   flex: 1;
-  overflow-x: auto;
+  overflow: visible;
+  max-width: 100%;
 }
 
 .tab {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 14px;
-  height: 32px;
+  padding: 6px 12px;
+  height: 34px;
   border-radius: 9999px;
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   white-space: nowrap;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 0;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -447,18 +452,57 @@ body.is-editing .ohk-tab-tools {
   transform: scale(1.1);
 }
 
-/* Grid & Cards */
+/* Site Main & Section: Full-width expansive page coverage */
+.site-main {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 16px 20px 80px;
+  box-sizing: border-box;
+}
+
+.section {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Grid & Cards: Expansive layout that fills the page */
 .grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
   width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 1536px) {
+  .grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+  }
 }
 
 @media (max-width: 1200px) {
   .grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
+  }
+}
+
+@media (max-width: 580px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
   }
 }
 
@@ -466,16 +510,18 @@ body.is-editing .ohk-tab-tools {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 10px 8px;
+  justify-content: space-between;
+  padding: 14px 10px 12px;
   border: 1.5px solid rgba(255, 255, 255, 0.55);
   border-radius: var(--radius-card);
-  background: rgba(255, 255, 255, 0.66);
+  background: rgba(255, 255, 255, 0.72);
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   user-select: none;
+  min-height: 220px;
 }
 
 .card:hover, .card:focus-within {
@@ -676,22 +722,22 @@ body.is-editing .ohk-tab-tools {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), 0 0 12px rgba(56, 189, 248, 0.6);
 }
 
-/* 5 Golden Stars Topper - Fits perfectly on the very top of the logo/box barely overlapping */
+/* 5 Golden Stars Topper - Raised cleanly above the logo/tile */
 .ohk-stars-topper {
   position: absolute;
-  top: -4px;
+  top: -14px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 12;
+  z-index: 15;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 2.5px;
-  padding: 1.5px 8px;
+  padding: 2px 9px;
   border-radius: 9999px;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.92) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.7);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 10px rgba(245, 158, 11, 0.4);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 41, 59, 0.92) 100%);
+  border: 1.5px solid #f59e0b;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), 0 0 12px rgba(245, 158, 11, 0.5);
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
@@ -699,7 +745,7 @@ body.is-editing .ohk-tab-tools {
 
 .ohk-stars-topper .star-char {
   color: #fbbf24;
-  font-size: 11.5px;
+  font-size: 11px;
   line-height: 1;
   text-shadow: 0 0 4px rgba(251, 191, 36, 0.8), 0 1px 2px rgba(0, 0, 0, 0.8);
   filter: drop-shadow(0 1px 2px rgba(217, 119, 6, 0.6));
@@ -724,7 +770,7 @@ body.is-editing .ohk-tab-tools {
 
 .card:hover .ohk-stars-topper {
   border-color: #fbbf24;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 16px rgba(251, 191, 36, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 18px rgba(251, 191, 36, 0.7);
 }
 
 .logo-tile {
@@ -733,9 +779,9 @@ body.is-editing .ohk-tab-tools {
   align-items: center;
   justify-content: center;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  max-height: 145px;
-  margin: 2px auto 6px;
+  height: 72px;
+  max-height: 80px;
+  margin: 12px auto 6px;
   padding: 2px;
   border: none !important;
   background: transparent !important;
@@ -748,17 +794,17 @@ body.is-editing .ohk-tab-tools {
   z-index: 1;
   width: 100%;
   height: 100%;
-  max-height: 138px;
+  max-height: 72px;
   object-fit: contain;
   background: transparent;
   /* Cutout transparent floating effect */
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.18));
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
 }
 
 .card:hover .logo-tile img {
-  transform: scale(1.1) translateY(-2px);
-  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.28));
+  transform: scale(1.08) translateY(-2px);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
 }
 
 .avatar {
@@ -766,10 +812,10 @@ body.is-editing .ohk-tab-tools {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 90px;
-  height: 90px;
-  margin: 4px auto 8px;
-  border-radius: 22px;
+  width: 60px;
+  height: 60px;
+  margin: 12px auto 6px;
+  border-radius: 14px;
   border: 1.5px solid rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(10px);
@@ -2192,15 +2238,14 @@ body.is-editing .ohk-trash {
 }
 
 /* =========================================================
-   MOBILE ULTRA-COMPACT, SLEEK & SYMMETRIC REDESIGN (< 640px)
-   - Perfectly symmetric and balanced layout (no left-to-right scrolling)
-   - All content fits on one screen width without horizontal scrollbars
-   - 20 squares visible at a glance (dense 4-column symmetric grid)
-   - 3 simple small text tabs symmetrically centered
-   - Noticeably bigger, eye-catching logos across all cards
+   MOBILE & TABLET SLEEK & SYMMETRIC REDESIGN (< 640px)
+   - All 4 tabs clearly displayed across the top without horizontal scroll
+   - Sleek compact brand logo
+   - Stars topper elevated above logos
+   - Rich full-width offers grid
    ========================================================= */
 @media (max-width: 640px) {
-  /* Prevent horizontal scroll */
+  /* Prevent horizontal scroll on document */
   html, body, .ohk-app-wrapper, .site-main, .section {
     overflow-x: hidden !important;
     width: 100% !important;
@@ -2208,66 +2253,63 @@ body.is-editing .ohk-trash {
     box-sizing: border-box !important;
   }
 
-  /* Header & Brand on Mobile: Top Left Corner & Significantly Bigger */
+  /* Header & Brand on Mobile: Compact single row */
   .site-header {
     border-bottom-width: 1px;
     width: 100%;
-    overflow-x: hidden;
+    overflow: visible;
   }
   .header-inner {
-    padding: 8px 10px 6px;
-    gap: 8px;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    text-align: left;
+    padding: 4px 8px;
+    gap: 6px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
     box-sizing: border-box;
   }
   .brand {
     display: flex;
     justify-content: flex-start;
-    align-items: flex-start;
-    align-self: flex-start;
+    align-items: center;
     width: auto;
     margin: 0;
     padding: 0;
+    flex-shrink: 0;
   }
   .ohk-logo-badge {
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
+    align-items: center;
   }
   .ohk-logo-img {
-    height: 120px !important;
-    max-height: 135px !important;
+    height: 32px !important;
+    max-height: 34px !important;
     width: auto !important;
-    max-width: 380px !important;
+    max-width: 90px !important;
     object-fit: contain;
   }
   .ohk-logo-svg {
-    height: 114px !important;
-    max-height: 130px !important;
+    height: 30px !important;
+    max-height: 32px !important;
     width: auto !important;
-    max-width: 360px !important;
+    max-width: 85px !important;
   }
 
-  /* All 4 Navigation Tabs in a Straight Horizontal Line Across - Thinner */
+  /* All 4 Navigation Tabs in a Single Horizontal Line Across - No Scrolling */
   .tabs,
   .tabs.tabs-flat-row,
   .site-header .tabs {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    gap: 6px !important;
-    width: 100% !important;
+    overflow: visible !important;
+    gap: 3px !important;
+    width: auto !important;
+    flex: 1 1 auto !important;
     max-width: 100% !important;
-    margin: 2px 0 0 !important;
-    padding: 2px 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
     box-sizing: border-box !important;
-    scrollbar-width: none;
   }
   .tabs::-webkit-scrollbar,
   .tabs.tabs-flat-row::-webkit-scrollbar,
@@ -2278,42 +2320,44 @@ body.is-editing .ohk-trash {
   .tab,
   .tabs .tab,
   .site-header .tab {
-    width: auto !important;
-    flex-shrink: 0 !important;
-    padding: 4px 10px !important;
-    height: 28px !important;
-    font-size: 10.5px !important;
+    flex: 1 1 0 !important;
+    padding: 3px 4px !important;
+    height: 26px !important;
+    font-size: 8px !important;
     font-weight: 800 !important;
     text-align: center !important;
     justify-content: center !important;
-    letter-spacing: 0.02em !important;
+    letter-spacing: 0 !important;
     border-radius: 9999px !important;
     white-space: nowrap !important;
+    min-width: 0 !important;
   }
 
   .tab .tab-label {
     display: block;
     width: 100%;
     text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  /* Top Navigation Tabs on Mobile - Clean, Symmetric & Unified */
+  /* Top Navigation Tabs on Mobile */
   .site-header .site-nav {
     display: flex !important;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
     align-items: center;
-    gap: 4px;
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto;
+    gap: 3px;
+    width: auto;
+    margin: 0;
     box-sizing: border-box;
-    overflow-x: hidden;
+    overflow: visible;
   }
 
   .nav-link {
-    padding: 4px 6px;
-    font-size: 10px;
+    padding: 3px 5px;
+    font-size: 9px;
     font-weight: 700;
     border-radius: 6px;
     white-space: nowrap;
@@ -2325,7 +2369,7 @@ body.is-editing .ohk-trash {
   }
 
   .nav-divider {
-    height: 12px;
+    height: 10px;
     margin: 0 1px;
   }
 
@@ -2335,9 +2379,9 @@ body.is-editing .ohk-trash {
   }
 
   .nav-dont-push-btn {
-    padding: 4px 6px !important;
-    font-size: 10px !important;
-    gap: 3px !important;
+    padding: 3px 5px !important;
+    font-size: 9px !important;
+    gap: 2px !important;
     background: rgba(255, 255, 255, 0.9) !important;
     border: 1px solid rgba(255, 255, 255, 0.95) !important;
     color: #0f172a !important;
@@ -2346,52 +2390,50 @@ body.is-editing .ohk-trash {
   .dont-push-edit-audio-btn {
     top: -3px;
     right: -4px;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
 
-  /* Remove lower category tabs on mobile as requested (only top header tabs remain) */
+  /* Remove lower category tabs on mobile as requested */
   .section .tabs {
     display: none !important;
   }
 
-  /* Section Padding: Symmetrical Side Spacing */
+  /* Section Padding: Symmetrical Full Width */
   .section {
-    padding: 6px 4px 36px;
+    padding: 8px 4px 48px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    overflow-x: hidden;
   }
 
-  /* Grid: Perfectly Symmetric 4-Column Grid (20+ squares visible) */
+  /* Grid: Responsive 2 or 3 column layout that fills the screen */
   .grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-    width: 100%;
-    max-width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
     margin: 0 auto;
     box-sizing: border-box;
-    overflow-x: hidden;
   }
 
   .card {
-    padding: 5px 2px 5px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    background: rgba(255, 255, 255, 0.72);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    min-height: unset;
+    padding: 10px 8px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.76);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    min-height: 190px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    justify-content: space-between;
+    align-items: stretch;
     box-sizing: border-box;
     width: 100%;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .card:hover, .card:focus-within {
@@ -2404,15 +2446,26 @@ body.is-editing .ohk-trash {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    position: relative;
   }
 
-  /* Big, Prominent Mobile Logo / Icon / Photo */
+  /* Raised Stars Topper on Mobile */
+  .ohk-stars-topper {
+    top: -12px !important;
+    padding: 1.5px 7px !important;
+    gap: 1.5px !important;
+  }
+
+  .ohk-stars-topper .star-char {
+    font-size: 9.5px !important;
+  }
+
+  /* Logo Tile on Mobile with top margin for raised stars */
   .logo-tile {
     width: 100%;
-    aspect-ratio: auto;
-    height: 48px;
-    max-height: 52px;
-    margin: 0 auto 3px;
+    height: 56px;
+    max-height: 60px;
+    margin: 10px auto 4px;
     padding: 0;
     display: flex;
     align-items: center;
@@ -2423,18 +2476,18 @@ body.is-editing .ohk-trash {
   }
 
   .logo-tile img {
-    height: 46px;
-    max-height: 50px;
+    height: 52px;
+    max-height: 56px;
     width: auto;
-    max-width: 98%;
+    max-width: 95%;
     object-fit: contain;
-    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.22));
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
   }
 
   .avatar {
-    width: 46px;
-    height: 46px;
-    margin: 0 auto 3px;
+    width: 50px;
+    height: 50px;
+    margin: 10px auto 4px;
     border-radius: 10px;
     border-width: 1px;
     display: flex;
@@ -2443,11 +2496,11 @@ body.is-editing .ohk-trash {
   }
 
   .avatar-initials {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 800;
   }
 
-  /* Typography: Symmetrically Centered */
+  /* Typography */
   .card-meta {
     width: 100%;
     padding: 0 1px;
@@ -2455,11 +2508,11 @@ body.is-editing .ohk-trash {
   }
 
   .card-name {
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 800;
-    line-height: 1.15;
+    line-height: 1.2;
     text-align: center;
-    max-height: 22px;
+    max-height: 26px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -2473,10 +2526,10 @@ body.is-editing .ohk-trash {
     display: none;
   }
 
-  /* Compact Symmetrical Payout */
+  /* Payout */
   .payout {
-    margin-top: 2px;
-    gap: 1px;
+    margin-top: 3px;
+    gap: 2px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2485,25 +2538,25 @@ body.is-editing .ohk-trash {
   }
 
   .payout-amt {
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 900;
     line-height: 1;
     text-align: center;
   }
 
   .payout-tag {
-    height: 12px;
-    padding: 0 3px;
-    font-size: 7px;
+    height: 14px;
+    padding: 0 4px;
+    font-size: 7.5px;
     font-weight: 800;
     border-width: 1px;
     letter-spacing: 0;
   }
 
-  /* Compact Action Buttons */
+  /* Actions */
   .card-actions {
-    gap: 2px;
-    padding-top: 3px;
+    gap: 4px;
+    padding-top: 4px;
     margin-top: auto;
     width: 100%;
     display: flex;
@@ -2512,39 +2565,31 @@ body.is-editing .ohk-trash {
   }
 
   .signup-btn {
-    min-height: 18px;
-    padding: 1px 2px;
-    font-size: 7.5px;
+    min-height: 22px;
+    padding: 2px 4px;
+    font-size: 8.5px;
     font-weight: 800;
-    border-radius: 3px;
+    border-radius: 4px;
     letter-spacing: 0;
     flex: 1 1 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-  }
-
-  .signup-btn svg {
-    display: none;
   }
 
   .secret-btn {
-    min-height: 18px;
-    padding: 1px 2px;
-    font-size: 7px;
+    min-height: 22px;
+    padding: 2px 4px;
+    font-size: 8px;
     font-weight: 800;
-    border-radius: 3px;
+    border-radius: 4px;
     letter-spacing: 0;
     flex: 1 1 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-  }
-
-  .secret-btn svg {
-    display: none;
   }
 
   /* Hide verbose promo row on the compact square grid so it stays clean */
@@ -3714,16 +3759,17 @@ body.is-editing .ohk-trash {
 }
 
 @media (max-width: 767px) {
-  /* Miniature Desktop Header on Mobile */
+  /* Sleek Compact Header on Mobile/Tablet */
   .site-header {
     position: sticky;
     top: 0;
     z-index: 40;
     padding: 2px 6px;
-    background: rgba(255, 255, 255, 0.65) !important;
+    background: rgba(255, 255, 255, 0.75) !important;
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    overflow: visible;
   }
 
   [data-vibe="goth"] .site-header,
@@ -3734,55 +3780,57 @@ body.is-editing .ohk-trash {
 
   .header-inner {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 8px;
-    padding: 8px 10px 6px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 4px 8px;
     width: 100%;
   }
 
   .brand {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: flex-start;
-    align-self: flex-start;
     padding: 0;
     margin: 0;
     height: auto;
+    flex-shrink: 0;
   }
 
   .ohk-logo-badge {
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center;
   }
 
   .ohk-logo-img {
-    height: 120px !important;
-    max-height: 135px !important;
+    height: 34px !important;
+    max-height: 36px !important;
     width: auto !important;
-    max-width: 380px !important;
+    max-width: 95px !important;
     object-fit: contain;
   }
 
   .ohk-logo-svg {
-    height: 114px !important;
-    max-height: 130px !important;
+    height: 32px !important;
+    max-height: 34px !important;
     width: auto !important;
-    max-width: 360px !important;
+    max-width: 90px !important;
   }
 
+  /* All 4 tabs visible without scrolling */
   .tabs.tabs-flat-row {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 4px;
-    padding: 2px 0 4px;
-    margin: 0;
-    width: 100%;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-end !important;
+    overflow: visible !important;
+    gap: 3px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    flex: 1 1 auto !important;
+    max-width: 100% !important;
   }
 
   .tabs.tabs-flat-row::-webkit-scrollbar {
@@ -3790,20 +3838,40 @@ body.is-editing .ohk-trash {
   }
 
   .tab {
-    flex-shrink: 0;
-    padding: 4px 8px !important;
-    font-size: 10px !important;
+    flex: 1 1 0 !important;
+    padding: 3px 6px !important;
+    font-size: 8.5px !important;
     font-weight: 800 !important;
-    letter-spacing: 0.02em !important;
+    letter-spacing: 0 !important;
     border-radius: 9999px !important;
-    height: 24px !important;
+    height: 26px !important;
     white-space: nowrap !important;
-    gap: 3px !important;
+    gap: 2px !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+  }
+
+  .tab .tab-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Stars topper raised above logo */
+  .ohk-stars-topper {
+    top: -12px !important;
+    padding: 1.5px 7px !important;
+  }
+
+  .ohk-stars-topper .star-char {
+    font-size: 9.5px !important;
   }
 
   /* Site main padding */
   .site-main {
-    padding: 4px 6px 60px !important;
+    padding: 8px 8px 60px !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   /* Miniature Desktop Multi-Column Grid (3 Columns on mobile phones) */
