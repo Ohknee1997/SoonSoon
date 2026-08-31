@@ -25,6 +25,8 @@ export interface CardData {
   rating?: number; // 1-5 stars
   orderNumber?: number; // Top-left order badge number (e.g. 1, 2, 3, 4, 5)
   showStarsTopper?: boolean; // Golden 5-stars banner over the top of the logo
+  instructionSub?: string; // Additional instruction subtext under main payout/instruction text
+  hideSecretSauce?: boolean; // Hide secret sauce button and disable drawer
   tabId: string;
   deleted?: boolean;
   hidden?: boolean;

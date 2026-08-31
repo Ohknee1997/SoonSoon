@@ -64,6 +64,12 @@ export const MinimalFintechView: React.FC<MinimalFintechViewProps> = ({
       onEditCard(card);
       return;
     }
+    if (card.tabId === 'fast-easy-money' || card.hideSecretSauce) {
+      if (card.signupUrl) {
+        window.open(card.signupUrl, '_blank', 'noopener,noreferrer');
+      }
+      return;
+    }
     try {
       const active = localStorage.getItem('ohknee.active.account.user.v2');
       const username = active ? JSON.parse(active) : 'guest';
@@ -256,10 +262,10 @@ export const MinimalFintechView: React.FC<MinimalFintechViewProps> = ({
               <div className="flex items-center gap-3">
                 {/* Clean Merchant Avatar */}
                 <div className="relative flex-shrink-0">
-                  <div className="w-12 h-12 rounded-xl bg-[#161a22] border border-slate-800 p-1.5 flex items-center justify-center shadow-inner overflow-hidden">
-                    {card.logoUrl || card.customImg ? (
+                  <div className="w-16 h-16 rounded-xl bg-[#161a22] border border-slate-700/80 p-1.5 flex items-center justify-center shadow-md overflow-hidden">
+                    {card.customImg || card.logoUrl || card.domain ? (
                       <img
-                        src={card.customImg || card.logoUrl}
+                        src={card.customImg || card.logoUrl || `https://www.google.com/s2/favicons?domain=${card.domain}&sz=256`}
                         alt={card.name}
                         className="w-full h-full object-contain filter drop-shadow-sm"
                         loading="lazy"
@@ -272,7 +278,7 @@ export const MinimalFintechView: React.FC<MinimalFintechViewProps> = ({
                   </div>
 
                   {hasOrder && (
-                    <span className="absolute -top-1.5 -left-1.5 w-4.5 h-4.5 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono text-[9px] font-bold flex items-center justify-center">
+                    <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono text-[10px] font-bold flex items-center justify-center">
                       #{card.orderNumber}
                     </span>
                   )}
@@ -291,9 +297,16 @@ export const MinimalFintechView: React.FC<MinimalFintechViewProps> = ({
                   )}
 
                   {card.payout && (
-                    <span className="inline-block mt-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.2 rounded-md border border-emerald-500/20">
-                      {card.payout}
-                    </span>
+                    <div className="mt-1 flex flex-col gap-1">
+                      <span className="inline-block text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                        {card.payout}
+                      </span>
+                      {card.instructionSub && (
+                        <span className="inline-block text-[11px] font-medium text-slate-100 bg-slate-900/90 px-2.5 py-1 rounded-md border border-slate-700/80">
+                          {card.instructionSub}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>

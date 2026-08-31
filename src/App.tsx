@@ -57,6 +57,9 @@ export default function App() {
 
   // Drawer handlers
   const handleToggleDrawer = (card: CardData) => {
+    if (card.tabId === 'fast-easy-money' || card.hideSecretSauce) {
+      return;
+    }
     if (expandedCardId === card.id) {
       setExpandedCardId(null);
     } else {

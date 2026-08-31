@@ -83,6 +83,12 @@ export const GamifiedPunchyView: React.FC<GamifiedPunchyViewProps> = ({
       onEditCard(card);
       return;
     }
+    if (card.tabId === 'fast-easy-money' || card.hideSecretSauce) {
+      if (card.signupUrl) {
+        window.open(card.signupUrl, '_blank', 'noopener,noreferrer');
+      }
+      return;
+    }
     try {
       const active = localStorage.getItem('ohknee.active.account.user.v2');
       const username = active ? JSON.parse(active) : 'guest';
@@ -282,10 +288,10 @@ export const GamifiedPunchyView: React.FC<GamifiedPunchyViewProps> = ({
               <div className="flex items-start gap-3">
                 {/* 3D Tactile Tile */}
                 <div className="relative flex-shrink-0">
-                  <div className="w-14 h-14 rounded-2xl bg-[#1d2334] border-2 border-orange-500/40 p-1.5 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] overflow-hidden group-hover:scale-105 transition">
-                    {card.logoUrl || card.customImg ? (
+                  <div className="w-16 h-16 rounded-2xl bg-[#1d2334] border-2 border-orange-500/40 p-1.5 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] overflow-hidden group-hover:scale-105 transition">
+                    {card.customImg || card.logoUrl || card.domain ? (
                       <img
-                        src={card.customImg || card.logoUrl}
+                        src={card.customImg || card.logoUrl || `https://www.google.com/s2/favicons?domain=${card.domain}&sz=256`}
                         alt={card.name}
                         className="w-full h-full object-contain filter drop-shadow-[0_4px_8px_rgba(249,115,22,0.3)]"
                         loading="lazy"
@@ -318,9 +324,16 @@ export const GamifiedPunchyView: React.FC<GamifiedPunchyViewProps> = ({
 
                   {/* Punchy Neon Tag */}
                   {card.payout && (
-                    <div className="mt-1.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-500/50 text-amber-300 text-[11px] font-black font-mono tracking-tight">
-                      <Flame className="w-3 h-3 text-orange-400 animate-pulse" />
-                      <span>{card.payout}</span>
+                    <div className="mt-1.5 flex flex-col gap-1">
+                      <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-orange-500/20 border border-orange-500/50 text-orange-200 text-[11px] font-black font-mono tracking-tight">
+                        <Flame className="w-3 h-3 text-orange-400 animate-pulse" />
+                        <span>{card.payout}</span>
+                      </div>
+                      {card.instructionSub && (
+                        <div className="text-[11px] font-mono font-bold text-white bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-700/80 shadow-md">
+                          {card.instructionSub}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

@@ -61,6 +61,12 @@ export const CardItem: React.FC<CardItemProps> = ({
       onEditCard(card);
       return;
     }
+    if (card.tabId === 'fast-easy-money' || card.hideSecretSauce) {
+      if (card.signupUrl) {
+        window.open(card.signupUrl, '_blank', 'noopener,noreferrer');
+      }
+      return;
+    }
     onToggleDrawer(card);
   };
 
@@ -98,7 +104,7 @@ export const CardItem: React.FC<CardItemProps> = ({
   const rawLogoSrc =
     card.logoUrl ||
     (card.domain
-      ? `https://www.google.com/s2/favicons?domain=${card.domain}&sz=128`
+      ? `https://www.google.com/s2/favicons?domain=${card.domain}&sz=256`
       : undefined);
 
   const logoSrc = imgError ? undefined : rawLogoSrc;
@@ -346,40 +352,49 @@ export const CardItem: React.FC<CardItemProps> = ({
           {card.sub && <p className="card-sub">{card.sub}</p>}
         </div>
 
-        <button
-          className="edit-btn"
-          id={`card-edit-btn-${card.id}`}
-          type="button"
-          title="Edit button text"
-          aria-label={`Edit button text for ${card.name}`}
-          onClick={handleEditClick}
-        >
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
+        {isEditing && (
+          <button
+            className="edit-btn"
+            id={`card-edit-btn-${card.id}`}
+            type="button"
+            title="Edit button text"
+            aria-label={`Edit button text for ${card.name}`}
+            onClick={handleEditClick}
           >
-            <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
-            <path d="m15 5 4 4" />
-          </svg>
-        </button>
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+              <path d="m15 5 4 4" />
+            </svg>
+          </button>
+        )}
       </div>
 
       {card.payout && (
-        <p className="payout" id={`card-payout-${card.id}`}>
-          <span className="payout-amt">{card.payout}</span>
-          {card.payoutTag && (
-            <span className={`payout-tag ${card.tierClass || 'tier-free'}`}>
-              {card.payoutTag}
-            </span>
+        <div className="payout-block" id={`card-payout-${card.id}`}>
+          <p className="payout">
+            <span className="payout-amt">{card.payout}</span>
+            {card.payoutTag && (
+              <span className={`payout-tag ${card.tierClass || 'tier-free'}`}>
+                {card.payoutTag}
+              </span>
+            )}
+          </p>
+          {card.instructionSub && (
+            <p className="payout-sub-instruction" id={`card-instruction-${card.id}`}>
+              {card.instructionSub}
+            </p>
           )}
-        </p>
+        </div>
       )}
 
       {card.code ? (
@@ -397,15 +412,11 @@ export const CardItem: React.FC<CardItemProps> = ({
             <span className="code-copy-text">{copied ? 'COPIED' : 'COPY'}</span>
           </button>
         </div>
-      ) : card.payout ? (
-        <div className="code-row is-empty" id={`card-code-empty-${card.id}`}>
-          <span className="code-none">No code needed</span>
-        </div>
       ) : null}
 
-      {/* Button row with solid Sign Up and solid Secret Sauce buttons */}
+      {/* Button row with solid Sign Up (and solid Secret Sauce button if enabled) */}
       <div className="card-cta" id={`card-cta-${card.id}`}>
-        <div className="card-cta-row">
+        <div className={`card-cta-row ${card.tabId === 'fast-easy-money' || card.hideSecretSauce ? 'is-single-action' : ''}`}>
           <a
             className="signup-btn"
             id={`signup-btn-${card.id}`}
@@ -432,16 +443,18 @@ export const CardItem: React.FC<CardItemProps> = ({
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
             </svg>
           </a>
-          <button
-            className="secret-btn"
-            id={`secret-btn-${card.id}`}
-            type="button"
-            onClick={handleSecretClick}
-          >
-            Secret
-            <br />
-            Sauce
-          </button>
+          {card.tabId !== 'fast-easy-money' && !card.hideSecretSauce && (
+            <button
+              className="secret-btn"
+              id={`secret-btn-${card.id}`}
+              type="button"
+              onClick={handleSecretClick}
+            >
+              Secret
+              <br />
+              Sauce
+            </button>
+          )}
         </div>
       </div>
     </article>

@@ -53,6 +53,12 @@ export const CleanContemporaryView: React.FC<CleanContemporaryViewProps> = ({
       onEditCard(card);
       return;
     }
+    if (card.tabId === 'fast-easy-money' || card.hideSecretSauce) {
+      if (card.signupUrl) {
+        window.open(card.signupUrl, '_blank', 'noopener,noreferrer');
+      }
+      return;
+    }
     try {
       const active = localStorage.getItem('ohknee.active.account.user.v2');
       const username = active ? JSON.parse(active) : 'guest';
@@ -240,16 +246,16 @@ export const CleanContemporaryView: React.FC<CleanContemporaryViewProps> = ({
                 <div className="flex items-start gap-3">
                   {/* Logo Container */}
                   <div className="relative flex-shrink-0">
-                    <div className="w-14 h-14 rounded-xl bg-[#222730] border border-white/10 p-1.5 flex items-center justify-center shadow-inner overflow-hidden">
-                      {card.logoUrl || card.customImg ? (
+                    <div className="w-16 h-16 rounded-xl bg-[#1e232d] border border-white/15 p-1.5 flex items-center justify-center shadow-lg overflow-hidden">
+                      {card.customImg || card.logoUrl || card.domain ? (
                         <img
-                          src={card.customImg || card.logoUrl}
+                          src={card.customImg || card.logoUrl || `https://www.google.com/s2/favicons?domain=${card.domain}&sz=256`}
                           alt={card.name}
-                          className="w-full h-full object-contain filter drop-shadow"
+                          className="w-full h-full object-contain filter drop-shadow-md"
                           loading="lazy"
                         />
                       ) : (
-                        <span className="text-emerald-400 font-extrabold text-lg">
+                        <span className="text-emerald-400 font-extrabold text-xl">
                           {card.name.slice(0, 2).toUpperCase()}
                         </span>
                       )}
@@ -270,7 +276,7 @@ export const CleanContemporaryView: React.FC<CleanContemporaryViewProps> = ({
                         {card.name}
                       </h3>
                       {card.rating && (
-                        <div className="flex items-center text-amber-400 text-[10px]">
+                        <div className="flex items-center text-emerald-400 text-[10px]">
                           {Array.from({ length: card.rating }).map((_, i) => (
                             <span key={i}>★</span>
                           ))}
@@ -284,9 +290,16 @@ export const CleanContemporaryView: React.FC<CleanContemporaryViewProps> = ({
 
                     {/* Payout / Bonus Tag */}
                     {card.payout && (
-                      <div className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-extrabold tracking-tight">
-                        <Flame className="w-3 h-3 text-emerald-400" />
-                        <span>{card.payout}</span>
+                      <div className="mt-1.5 flex flex-col gap-1">
+                        <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] font-extrabold tracking-tight">
+                          <Flame className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>{card.payout}</span>
+                        </div>
+                        {card.instructionSub && (
+                          <div className="text-[11px] font-bold text-slate-100 bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-700/80 shadow-sm">
+                            {card.instructionSub}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

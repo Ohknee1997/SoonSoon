@@ -243,9 +243,9 @@ p {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 20px;
-  padding: 6px 16px 6px 6px;
+  flex-wrap: nowrap;
+  gap: 16px;
+  padding: 4px 16px 4px 6px;
 }
 
 .brand {
@@ -266,9 +266,9 @@ p {
 }
 
 .ohk-logo-img {
-  height: 80px;
+  height: 120px;
   width: auto;
-  max-width: 260px;
+  max-width: 380px;
   object-fit: contain;
   display: block;
   background: transparent;
@@ -280,7 +280,7 @@ p {
 }
 
 .ohk-logo-svg {
-  height: 76px;
+  height: 114px;
   width: auto;
   display: block;
   background: transparent;
@@ -288,40 +288,44 @@ p {
 
 @media (min-width: 768px) {
   .ohk-logo-img {
-    height: 180px;
-    max-width: 560px;
+    height: 270px;
+    max-width: 800px;
   }
   .ohk-logo-svg {
-    height: 170px;
+    height: 255px;
   }
 }
 
-/* Tabs: Flat single row on the same level */
+/* Tabs: Straight thin single row on the same level */
 .tabs.tabs-flat-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 8px;
   margin: 0;
-  padding: 4px 0;
+  padding: 2px 0;
   flex: 1;
+  overflow-x: auto;
 }
 
 .tab {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 11px 22px;
+  gap: 6px;
+  padding: 6px 14px;
+  height: 32px;
   border-radius: 9999px;
   font-family: inherit;
-  font-size: 15px;
+  font-size: 12.5px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   white-space: nowrap;
+  flex-shrink: 0;
   cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* First three tabs: solid black tabs with crisp white typography */
@@ -329,33 +333,33 @@ p {
   color: #ffffff !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
   background: #0f172a !important;
-  border: 2px solid #334155;
-  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.3);
+  border: 1.5px solid #334155;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
 }
 
 .tab.tab-top-tier:hover {
   color: #ffffff !important;
   background: #1e293b !important;
   border-color: #64748b;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.35);
 }
 
 .tab.tab-top-tier.is-active {
   color: #ffffff !important;
   background: #000000 !important;
-  border: 2px solid #38bdf8 !important;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.4), 0 4px 18px rgba(0, 0, 0, 0.55);
-  transform: translateY(-2px) scale(1.02);
+  border: 1.5px solid #38bdf8 !important;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.4), 0 3px 12px rgba(0, 0, 0, 0.45);
+  transform: translateY(-1px);
 }
 
 /* End tab: Vibrant bright red tab on the same level */
 .tab.tab-bright-red {
   color: #ffffff !important;
   background: linear-gradient(135deg, #ff0033 0%, #ee0022 45%, #cc001b 100%) !important;
-  border: 2px solid #ff4d4d;
-  box-shadow: 0 4px 16px rgba(238, 0, 34, 0.55), 0 0 16px rgba(255, 0, 51, 0.35);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  border: 1.5px solid #ff4d4d;
+  box-shadow: 0 3px 12px rgba(238, 0, 34, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   font-weight: 900;
 }
 
@@ -446,15 +450,23 @@ body.is-editing .ohk-tab-tools {
 /* Grid & Cards */
 .grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+  }
 }
 
 .card {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 12px 10px;
+  padding: 10px 8px;
   border: 1.5px solid rgba(255, 255, 255, 0.55);
   border-radius: var(--radius-card);
   background: rgba(255, 255, 255, 0.66);
@@ -722,8 +734,8 @@ body.is-editing .ohk-tab-tools {
   justify-content: center;
   width: 100%;
   aspect-ratio: 1 / 1;
-  max-height: 125px;
-  margin: 2px auto 8px;
+  max-height: 145px;
+  margin: 2px auto 6px;
   padding: 2px;
   border: none !important;
   background: transparent !important;
@@ -736,11 +748,11 @@ body.is-editing .ohk-tab-tools {
   z-index: 1;
   width: 100%;
   height: 100%;
-  max-height: 118px;
+  max-height: 138px;
   object-fit: contain;
   background: transparent;
   /* Cutout transparent floating effect */
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
 }
 
@@ -873,20 +885,64 @@ body.is-editing .edit-btn {
 }
 
 /* Badges & Payout */
+.payout-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  width: 100%;
+}
+
 .payout {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  margin-top: 10px;
+  gap: 3px;
+  width: 100%;
 }
 
 .payout-amt {
-  font-size: 24px;
+  font-size: 13px;
   font-weight: 900;
-  line-height: 1;
-  color: rgb(var(--accent));
-  text-shadow: 0 0 22px rgba(var(--accent), 0.35);
+  line-height: 1.25;
+  text-align: center;
+  color: #0f172a;
+  text-shadow: none;
+  word-break: break-word;
+}
+
+[data-vibe="goth"] .payout-amt,
+[data-vibe="greed"] .payout-amt {
+  color: #ffffff;
+}
+
+.payout-sub-instruction {
+  width: 100%;
+  padding: 4px 6px;
+  border-radius: 7px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.3;
+  text-align: center;
+  letter-spacing: 0.01em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  word-break: break-word;
+}
+
+[data-vibe="goth"] .payout-sub-instruction {
+  background: #18181b;
+  border-color: #3f3f46;
+  color: #ffffff;
+}
+
+[data-vibe="greed"] .payout-sub-instruction {
+  background: #064e3b;
+  border-color: #059669;
+  color: #ffffff;
 }
 
 .payout-tag {
@@ -2183,49 +2239,56 @@ body.is-editing .ohk-trash {
     align-items: flex-start;
   }
   .ohk-logo-img {
-    height: 80px !important;
-    max-height: 92px !important;
+    height: 120px !important;
+    max-height: 135px !important;
     width: auto !important;
-    max-width: 260px !important;
+    max-width: 380px !important;
     object-fit: contain;
   }
   .ohk-logo-svg {
-    height: 76px !important;
-    max-height: 88px !important;
+    height: 114px !important;
+    max-height: 130px !important;
     width: auto !important;
-    max-width: 250px !important;
+    max-width: 360px !important;
   }
 
-  /* All 4 Navigation Tabs 100% Visible in a 2x2 Grid on Mobile - No Scrolling */
+  /* All 4 Navigation Tabs in a Straight Horizontal Line Across - Thinner */
   .tabs,
   .tabs.tabs-flat-row,
   .site-header .tabs {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 4px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px !important;
     width: 100% !important;
     max-width: 100% !important;
-    margin: 4px 0 0 !important;
-    padding: 0 !important;
+    margin: 2px 0 0 !important;
+    padding: 2px 0 !important;
     box-sizing: border-box !important;
-    overflow: visible !important;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar,
+  .tabs.tabs-flat-row::-webkit-scrollbar,
+  .site-header .tabs::-webkit-scrollbar {
+    display: none;
   }
 
   .tab,
   .tabs .tab,
   .site-header .tab {
-    width: 100% !important;
-    padding: 6px 4px !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
+    padding: 4px 10px !important;
+    height: 28px !important;
     font-size: 10.5px !important;
     font-weight: 800 !important;
     text-align: center !important;
     justify-content: center !important;
-    letter-spacing: 0.01em !important;
-    border-radius: 8px !important;
-    white-space: normal !important;
-    line-height: 1.15 !important;
-    min-height: 36px !important;
-    box-sizing: border-box !important;
+    letter-spacing: 0.02em !important;
+    border-radius: 9999px !important;
+    white-space: nowrap !important;
   }
 
   .tab .tab-label {
@@ -3696,18 +3759,18 @@ body.is-editing .ohk-trash {
   }
 
   .ohk-logo-img {
-    height: 80px !important;
-    max-height: 92px !important;
+    height: 120px !important;
+    max-height: 135px !important;
     width: auto !important;
-    max-width: 260px !important;
+    max-width: 380px !important;
     object-fit: contain;
   }
 
   .ohk-logo-svg {
-    height: 76px !important;
-    max-height: 88px !important;
+    height: 114px !important;
+    max-height: 130px !important;
     width: auto !important;
-    max-width: 250px !important;
+    max-width: 360px !important;
   }
 
   .tabs.tabs-flat-row {
