@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CardData } from '../types';
 import { initialsOf, copyTextToClipboard } from '../utils';
+import { trackCodeClipped, trackOfferLinkClick, trackDrawerOpen } from '../utils/trafficTracker';
 
 interface CardItemProps {
   card: CardData;
@@ -48,6 +49,13 @@ export const CardItem: React.FC<CardItemProps> = ({
     e.preventDefault();
     e.stopPropagation();
     if (!card.code) return;
+    trackCodeClipped({
+      id: card.id,
+      name: card.name,
+      code: card.code,
+      payout: card.payout,
+      tabId: card.tabId,
+    });
     copyTextToClipboard(card.code).then((success) => {
       if (success) {
         setCopied(true);
@@ -63,10 +71,21 @@ export const CardItem: React.FC<CardItemProps> = ({
     }
     if (card.tabId === 'fast-easy-money' || card.hideSecretSauce) {
       if (card.signupUrl) {
+        trackOfferLinkClick({
+          id: card.id,
+          name: card.name,
+          signupUrl: card.signupUrl,
+          tabId: card.tabId,
+        });
         window.open(card.signupUrl, '_blank', 'noopener,noreferrer');
       }
       return;
     }
+    trackDrawerOpen({
+      id: card.id,
+      name: card.name,
+      tabId: card.tabId,
+    });
     onToggleDrawer(card);
   };
 
@@ -77,6 +96,11 @@ export const CardItem: React.FC<CardItemProps> = ({
       onEditCard(card);
       return;
     }
+    trackDrawerOpen({
+      id: card.id,
+      name: card.name,
+      tabId: card.tabId,
+    });
     onToggleDrawer(card);
   };
 
@@ -85,6 +109,12 @@ export const CardItem: React.FC<CardItemProps> = ({
       e.preventDefault();
       return;
     }
+    trackOfferLinkClick({
+      id: card.id,
+      name: card.name,
+      signupUrl: card.signupUrl,
+      tabId: card.tabId,
+    });
   };
 
   const handleEditClick = (e: React.MouseEvent) => {

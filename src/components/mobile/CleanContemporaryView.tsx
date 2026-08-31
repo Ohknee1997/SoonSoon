@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CardData, EngineData, TabConfig, CardDetail, UserProfile } from '../../types';
 import { copyTextToClipboard } from '../../utils';
 import { trackOfferClick } from '../../utils/userAnalytics';
+import { trackCodeClipped, trackOfferLinkClick, trackDrawerOpen } from '../../utils/trafficTracker';
 import { WiiFaceIcon } from '../WiiFaceIcon';
 import { getAvatarById } from '../../data/wiiAvatars';
 import { Search, Copy, Check, ExternalLink, Sparkles, Flame, Star, ShieldCheck, ChevronRight } from 'lucide-react';
@@ -40,6 +41,13 @@ export const CleanContemporaryView: React.FC<CleanContemporaryViewProps> = ({
   const handleCopyCode = (e: React.MouseEvent, card: CardData) => {
     e.stopPropagation();
     if (!card.code) return;
+    trackCodeClipped({
+      id: card.id,
+      name: card.name,
+      code: card.code,
+      payout: card.payout,
+      tabId: card.tabId,
+    });
     copyTextToClipboard(card.code).then((success) => {
       if (success) {
         setCopiedCodeId(card.id);
@@ -55,6 +63,12 @@ export const CleanContemporaryView: React.FC<CleanContemporaryViewProps> = ({
     }
     if (card.tabId === 'fast-easy-money' || card.hideSecretSauce) {
       if (card.signupUrl) {
+        trackOfferLinkClick({
+          id: card.id,
+          name: card.name,
+          signupUrl: card.signupUrl,
+          tabId: card.tabId,
+        });
         window.open(card.signupUrl, '_blank', 'noopener,noreferrer');
       }
       return;
@@ -64,6 +78,11 @@ export const CleanContemporaryView: React.FC<CleanContemporaryViewProps> = ({
       const username = active ? JSON.parse(active) : 'guest';
       trackOfferClick(username, card.name, 'drawer');
     } catch {}
+    trackDrawerOpen({
+      id: card.id,
+      name: card.name,
+      tabId: card.tabId,
+    });
     onToggleDrawer(card);
   };
 
@@ -73,6 +92,12 @@ export const CleanContemporaryView: React.FC<CleanContemporaryViewProps> = ({
       onEditCard(card);
       return;
     }
+    trackOfferLinkClick({
+      id: card.id,
+      name: card.name,
+      signupUrl: card.signupUrl,
+      tabId: card.tabId,
+    });
     try {
       const active = localStorage.getItem('ohknee.active.account.user.v2');
       const username = active ? JSON.parse(active) : 'guest';

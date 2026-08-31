@@ -19,15 +19,18 @@ import {
   getFromStorage,
   STORE_DETAIL,
 } from './utils';
+import { trackPageView, startPresenceTracking } from './utils/trafficTracker';
 import { Header } from './components/Header';
 import { CardItem } from './components/CardItem';
 import { EngineCard } from './components/EngineCard';
 import { CardDrawer } from './components/CardDrawer';
+import { OwnerAnalyticsModal } from './components/OwnerAnalyticsModal';
 
 export default function App() {
   const [tabs] = useState<TabConfig[]>(DEFAULT_TABS);
   const [activeTabId, setActiveTabId] = useState<string>('fast-easy-money');
   const [vibe, setVibe] = useState<VibeType>('default');
+  const [isOwnerAnalyticsOpen, setIsOwnerAnalyticsOpen] = useState(false);
 
   const [headerConfig] = useState<HeaderConfig>({
     logoScale: 1,
@@ -54,6 +57,15 @@ export default function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-vibe', vibe);
   }, [vibe]);
+
+  // Track page views and active presence
+  useEffect(() => {
+    trackPageView(activeTabId);
+    const stopPresence = startPresenceTracking(activeTabId);
+    return () => {
+      stopPresence();
+    };
+  }, [activeTabId]);
 
   // Drawer handlers
   const handleToggleDrawer = (card: CardData) => {
@@ -152,6 +164,31 @@ export default function App() {
           )}
         </section>
       </main>
+
+      {/* Small Desktop-Only Owner Analytics Button at the Bottom */}
+      <div className="fixed bottom-3 right-4 z-40 hidden md:flex items-center">
+        <button
+          type="button"
+          id="owner-analytics-btn"
+          onClick={() => setIsOwnerAnalyticsOpen(true)}
+          className="group flex items-center gap-1.5 rounded-full border border-white/25 bg-slate-950/80 px-2.5 py-1 text-[11px] font-semibold text-slate-300 shadow-lg backdrop-blur-md transition-all duration-200 hover:border-amber-400/60 hover:bg-slate-900 hover:text-amber-300 hover:shadow-amber-500/20 active:scale-95 cursor-pointer"
+          title="Owner Analytics & Traffic Leaderboard"
+        >
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+          </span>
+          <span>Analytics</span>
+        </button>
+      </div>
+
+      {/* Owner Analytics & Traffic Leaderboard Modal */}
+      <OwnerAnalyticsModal
+        isOpen={isOwnerAnalyticsOpen}
+        onClose={() => setIsOwnerAnalyticsOpen(false)}
+        cards={cards}
+        tabs={tabs}
+      />
     </div>
   );
 }
